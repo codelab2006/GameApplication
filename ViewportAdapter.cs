@@ -24,7 +24,7 @@ namespace GameApplication
             _window.ClientSizeChanged += OnClientSizeChanged;
         }
 
-        private void OnClientSizeChanged(object sender, EventArgs eventArgs)
+        private void OnClientSizeChanged(object? sender, EventArgs eventArgs)
         {
             var clientBounds = _window.ClientBounds;
 

@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -6,13 +8,6 @@ namespace GameApplication
 {
     public class Application : Game
     {
-        public ViewportAdapter ViewportAdapter { private set; get; }
-        public Camera Camera { private set; get; }
-        public SpriteBatch SpriteBatch { private set; get; }
-
-        private Texture2D _texture2DO;
-        private Texture2D _texture2DXP;
-
         public Application()
         {
             Window.AllowUserResizing = true;
@@ -31,33 +26,48 @@ namespace GameApplication
 
         protected override void Initialize()
         {
-            ViewportAdapter = new ViewportAdapter(Window, GraphicsDevice, Constants.VirtualWidth, Constants.VirtualHeight);
-            Camera = new Camera(ViewportAdapter);
+            var viewportAdapter = new ViewportAdapter(Window, GraphicsDevice, Constants.VirtualWidth, Constants.VirtualHeight);
+            var camera = new Camera(viewportAdapter);
+            var screenManager = new ScreenManager(this, new Dictionary<string, Screen> {
+                { nameof(LogoScreen), new LogoScreen(this) },
+                { nameof(MenuScreen), new MenuScreen(this) },
+                { nameof(GameScreen), new GameScreen(this) },
+                { nameof(OptionsScreen), new OptionsScreen(this) },
+                { nameof(InformationScreen), new InformationScreen(this) },
+            });
+
+            Global.Initialize(this, viewportAdapter, camera, screenManager);
 
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
-            SpriteBatch = new SpriteBatch(GraphicsDevice);
-
-            _texture2DO = Content.Load<Texture2D>("o");
-            _texture2DXP = Content.Load<Texture2D>("xp");
+            base.LoadContent();
         }
 
         protected override void BeginRun()
         {
-            Camera.LookAt(_texture2DXP.Bounds.Center.ToVector2());
-
             base.BeginRun();
         }
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
             // position = speed * gameTime.GetElapsedSeconds();
+
+            if (Keyboard.GetState().IsKeyDown(Keys.D1))
+                Global.ScreenManager.GoTo(nameof(LogoScreen));
+            if (Keyboard.GetState().IsKeyDown(Keys.D2))
+                Global.ScreenManager.GoTo(nameof(MenuScreen));
+            if (Keyboard.GetState().IsKeyDown(Keys.D3))
+                Global.ScreenManager.GoTo(nameof(GameScreen));
+            if (Keyboard.GetState().IsKeyDown(Keys.D4))
+                Global.ScreenManager.GoTo(nameof(OptionsScreen));
+            if (Keyboard.GetState().IsKeyDown(Keys.D5))
+                Global.ScreenManager.GoTo(nameof(InformationScreen));
 
             base.Update(gameTime);
         }
@@ -65,12 +75,6 @@ namespace GameApplication
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
-            SpriteBatch.Begin(transformMatrix: Camera.GetViewMatrix());
-
-            SpriteBatch.Draw(_texture2DXP, Vector2.Zero, Color.White);
-            SpriteBatch.Draw(_texture2DO, _texture2DXP.Bounds.Center.ToVector2(), _texture2DO.Bounds, Color.White, 0, new Vector2(_texture2DO.Width / 2, _texture2DO.Height / 2), 1, SpriteEffects.None, 0);
-
-            SpriteBatch.End();
 
             base.Draw(gameTime);
         }
