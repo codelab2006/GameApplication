@@ -10,6 +10,8 @@ namespace GameApplication
     {
         public Application()
         {
+            Constants.Initialize();
+
             Window.AllowUserResizing = true;
 
             _ = new GraphicsDeviceManager(this)
@@ -68,6 +70,8 @@ namespace GameApplication
                 Global.ScreenManager.GoTo(nameof(OptionsScreen));
             if (Keyboard.GetState().IsKeyDown(Keys.D5))
                 Global.ScreenManager.GoTo(nameof(InformationScreen));
+
+            Global.ScreenManager.GoTo(nameof(GameScreen));
 
             base.Update(gameTime);
         }

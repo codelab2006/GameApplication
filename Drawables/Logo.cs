@@ -5,7 +5,7 @@ namespace GameApplication
 {
     public class Logo : Sprite
     {
-        public Logo(Texture2D? texture2D, Rectangle? sourceRectangle) : base(texture2D, sourceRectangle)
+        public Logo(Texture2D? texture2D) : base(texture2D)
         {
             Position = new Vector2(Constants.VirtualWidth / 2, Constants.VirtualHeight / 2);
         }

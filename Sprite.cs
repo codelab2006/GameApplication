@@ -7,13 +7,19 @@ namespace GameApplication
     {
         private readonly Texture2D? _texture2D;
         private readonly Rectangle? _sourceRectangle;
-        public Vector2 Position { get; set; }
+        public Vector2 Position { get; set; } = Vector2.Zero;
         public Color Color { get; set; } = Color.White;
         public float Rotation { get; set; } = 0;
         public Vector2 Origin { get; set; } = Vector2.Zero;
         public Vector2 Scale { get; set; } = Vector2.One;
         public SpriteEffects Effects { get; set; } = SpriteEffects.None;
         public float LayerDepth { get; set; } = 0;
+
+        public Sprite() : this(null) { }
+
+        public Sprite(Texture2D? texture2D) : this(texture2D, null) { }
+
+        public Sprite(int xIndex, int yIndex, int width, int height) : this(null, new Rectangle(xIndex, yIndex, width, height)) { }
 
         public Sprite(Texture2D? texture2D, Rectangle? sourceRectangle)
         {
@@ -26,13 +32,18 @@ namespace GameApplication
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            if (_texture2D is not null)
-                spriteBatch.Draw(_texture2D, Position, _sourceRectangle, Color, Rotation, Origin, Scale, Effects, LayerDepth);
+            Draw(spriteBatch, null);
         }
 
-        public void Draw(SpriteBatch spriteBatch, Texture2D texture2D)
+        public void Draw(SpriteBatch spriteBatch, Vector2? position)
         {
-            spriteBatch.Draw(texture2D, Position, _sourceRectangle, Color, Rotation, Origin, Scale, Effects, LayerDepth);
+            if (_texture2D is not null)
+                Draw(spriteBatch, _texture2D, position);
+        }
+
+        public void Draw(SpriteBatch spriteBatch, Texture2D texture2D, Vector2? position)
+        {
+            spriteBatch.Draw(texture2D, position ?? Position, _sourceRectangle, Color, Rotation, Origin, Scale, Effects, LayerDepth);
         }
     }
 }
