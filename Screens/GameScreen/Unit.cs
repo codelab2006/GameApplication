@@ -2,12 +2,12 @@ namespace GameApplication
 {
     public enum UnitFG
     {
-        NONE = 0,
+        NONE = 1,
     }
 
     public enum UnitBG
     {
-        NONE = 0,
+        NONE = 1,
     }
 
     public class Unit

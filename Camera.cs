@@ -10,11 +10,7 @@ namespace GameApplication
         private float _zoom = 1;
         public float Zoom
         {
-            get => _zoom;
-            set
-            {
-                _zoom = value > 0 ? value : 0;
-            }
+            get => _zoom; set => _zoom = value > 0 ? value : 0;
         }
         private readonly Vector2 _origin = new Vector2(viewportAdapter.VirtualWidth / 2f, viewportAdapter.VirtualHeight / 2f);
 

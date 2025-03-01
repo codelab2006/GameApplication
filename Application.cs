@@ -29,7 +29,10 @@ namespace GameApplication
         protected override void Initialize()
         {
             var viewportAdapter = new ViewportAdapter(Window, GraphicsDevice, Constants.VirtualWidth, Constants.VirtualHeight);
-            var camera = new Camera(viewportAdapter);
+            var camera = new Camera(viewportAdapter)
+            {
+                Zoom = 1
+            };
             var screenManager = new ScreenManager(this, new Dictionary<string, Screen> {
                 { nameof(LogoScreen), new LogoScreen(this) },
                 { nameof(MenuScreen), new MenuScreen(this) },
@@ -78,7 +81,7 @@ namespace GameApplication
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.CornflowerBlue);
 
             base.Draw(gameTime);
         }
