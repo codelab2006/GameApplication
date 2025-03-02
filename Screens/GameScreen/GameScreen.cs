@@ -48,7 +48,7 @@ namespace GameApplication
                 if (state.IsKeyDown(Keys.Up)) direction -= Vector2.UnitY;
                 if (state.IsKeyDown(Keys.Left)) direction -= Vector2.UnitX;
                 if (state.IsKeyDown(Keys.Right)) direction += Vector2.UnitX;
-                Move(direction * 200 * gameTime.GetElapsedSeconds());
+                Move(direction * 100 * gameTime.GetElapsedSeconds());
                 _player.Position = _position;
                 Global.Camera.LookAt(_player.Position);
             }

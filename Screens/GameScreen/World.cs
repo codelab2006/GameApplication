@@ -19,7 +19,7 @@ namespace GameApplication
             {
                 for (int j = 0; j != _world.GetLength(1); j++)
                 {
-                    _world[i, j] = new Unit();
+                    _world[i, j] = new Unit(i == 0 || j == 0 ? UnitBG.STONE : UnitBG.DIRT);
                 }
             }
             Width = _world.GetLength(1) * Constants.UnitWidth;
@@ -37,9 +37,9 @@ namespace GameApplication
 
             var (vFrom, vTo, hFrom, hTo) = Global.GetDrawableRange(position);
 
-            for (int i = vFrom; i != vTo; i++)
+            for (int i = vFrom; i < vTo; i++)
             {
-                for (int j = hFrom; j != hTo; j++)
+                for (int j = hFrom; j < hTo; j++)
                 {
                     var unit = _world[i, j];
                     if (unit is not null)
