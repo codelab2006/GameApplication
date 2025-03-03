@@ -8,24 +8,13 @@ namespace GameApplication
 {
     public static class Global
     {
-        public static Game Game { private set; get; }
-        public static GameWindow Window { private set; get; }
-        public static GraphicsDevice GraphicsDevice { private set; get; }
-        public static ContentManager Content { private set; get; }
-        public static ViewportAdapter ViewportAdapter { private set; get; }
-        public static Camera Camera { private set; get; }
-        public static ScreenManager ScreenManager { private set; get; }
-
-        public static void Initialize(Game game, ViewportAdapter viewportAdapter, Camera camera, ScreenManager screenManager)
-        {
-            Game = game;
-            Window = game.Window;
-            GraphicsDevice = game.GraphicsDevice;
-            Content = game.Content;
-            ViewportAdapter = viewportAdapter;
-            Camera = camera;
-            ScreenManager = screenManager;
-        }
+        public static Game Game { set; get; }
+        public static GameWindow Window { set; get; }
+        public static GraphicsDevice GraphicsDevice { set; get; }
+        public static ContentManager Content { set; get; }
+        public static ViewportAdapter ViewportAdapter { set; get; }
+        public static Camera Camera { set; get; }
+        public static ScreenManager ScreenManager { set; get; }
 
         public static (int vFrom, int vTo, int hFrom, int hTo) GetDrawableRange(Vector2 position)
         {
@@ -50,8 +39,6 @@ namespace GameApplication
             if (hTo * Constants.UnitWidth < hToPixel) hTo += 1;
             if (hTo > Constants.WorldHCount) hTo = Constants.WorldHCount;
             if (hTo < 0) hTo = 0;
-
-            System.Console.WriteLine((vFrom, vTo, hFrom, hTo));
             return (vFrom, vTo, hFrom, hTo);
         }
     }

@@ -15,11 +15,11 @@ namespace GameApplication
         public void Initialize()
         {
             _world = new Unit[Constants.WorldVCount, Constants.WorldHCount];
-            for (int i = 0; i != _world.GetLength(0); i++)
+            for (int i = _world.GetLength(0) / 2 + 5; i != _world.GetLength(0); i++)
             {
                 for (int j = 0; j != _world.GetLength(1); j++)
                 {
-                    _world[i, j] = new Unit(i == 0 || j == 0 ? UnitBG.STONE : UnitBG.DIRT);
+                    _world[i, j] = new Unit(UnitBG.DIRT);
                 }
             }
             Width = _world.GetLength(1) * Constants.UnitWidth;

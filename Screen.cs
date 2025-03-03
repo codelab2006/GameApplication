@@ -7,7 +7,7 @@ namespace GameApplication
 {
     public abstract class Screen(Game game) : DrawableGameComponent(game)
     {
-        protected SpriteBatch _spriteBatch = new(game.GraphicsDevice);
+        protected readonly SpriteBatch _spriteBatch = new(game.GraphicsDevice);
 
         public virtual void Enter()
         {

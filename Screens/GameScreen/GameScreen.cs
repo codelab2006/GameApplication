@@ -10,6 +10,8 @@ namespace GameApplication
         private Vector2 _position;
         private Player? _player;
 
+        private readonly FPS _fps = new();
+
         public override void Initialize()
         {
             _world.Initialize();
@@ -21,9 +23,11 @@ namespace GameApplication
 
         protected override void LoadContent()
         {
+            _fps.LoadContent();
+
             _world.LoadContent();
 
-            _player = new(Global.Content.Load<Texture2D>("o"))
+            _player = new(Global.Content.Load<Texture2D>("player"))
             {
                 Position = _position
             };
@@ -44,14 +48,16 @@ namespace GameApplication
             {
                 var direction = Vector2.Zero;
                 var state = Keyboard.GetState();
-                if (state.IsKeyDown(Keys.Down)) direction += Vector2.UnitY;
-                if (state.IsKeyDown(Keys.Up)) direction -= Vector2.UnitY;
-                if (state.IsKeyDown(Keys.Left)) direction -= Vector2.UnitX;
-                if (state.IsKeyDown(Keys.Right)) direction += Vector2.UnitX;
-                Move(direction * 100 * gameTime.GetElapsedSeconds());
+                if (state.IsKeyDown(Keys.W)) direction -= Vector2.UnitY;
+                if (state.IsKeyDown(Keys.S)) direction += Vector2.UnitY;
+                if (state.IsKeyDown(Keys.A)) direction -= Vector2.UnitX;
+                if (state.IsKeyDown(Keys.D)) direction += Vector2.UnitX;
+                Move(direction * 240 * gameTime.GetElapsedSeconds());
                 _player.Position = _position;
                 Global.Camera.LookAt(_player.Position);
             }
+
+            _fps.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -63,11 +69,10 @@ namespace GameApplication
             _world.Draw(_spriteBatch, _position);
 
             _player?.Draw(_spriteBatch);
-            // _player?.Draw(_spriteBatch, new Vector2(_player.Position.X - Constants.VirtualWidth / 2, _player.Position.Y));
-            // _player?.Draw(_spriteBatch, new Vector2(_player.Position.X + Constants.VirtualWidth / 2, _player.Position.Y));
-            // _player?.Draw(_spriteBatch, new Vector2(_player.Position.X, _player.Position.Y - Constants.VirtualHeight / 2));
-            // _player?.Draw(_spriteBatch, new Vector2(_player.Position.X, _player.Position.Y + Constants.VirtualHeight / 2));
+
             _spriteBatch.End();
+
+            _fps.Draw();
 
             base.Draw(gameTime);
         }

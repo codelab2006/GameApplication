@@ -28,20 +28,22 @@ namespace GameApplication
 
         protected override void Initialize()
         {
-            var viewportAdapter = new ViewportAdapter(Window, GraphicsDevice, Constants.VirtualWidth, Constants.VirtualHeight);
-            var camera = new Camera(viewportAdapter)
+            Global.Game = this;
+            Global.Window = Window;
+            Global.GraphicsDevice = GraphicsDevice;
+            Global.Content = Content;
+            Global.ViewportAdapter = new ViewportAdapter(Window, GraphicsDevice, Constants.VirtualWidth, Constants.VirtualHeight);
+            Global.Camera = new Camera(Global.ViewportAdapter)
             {
                 Zoom = 1
             };
-            var screenManager = new ScreenManager(this, new Dictionary<string, Screen> {
+            Global.ScreenManager = new ScreenManager(this, new Dictionary<string, Screen> {
                 { nameof(LogoScreen), new LogoScreen(this) },
                 { nameof(MenuScreen), new MenuScreen(this) },
                 { nameof(GameScreen), new GameScreen(this) },
                 { nameof(OptionsScreen), new OptionsScreen(this) },
                 { nameof(InformationScreen), new InformationScreen(this) },
             });
-
-            Global.Initialize(this, viewportAdapter, camera, screenManager);
 
             base.Initialize();
         }
