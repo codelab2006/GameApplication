@@ -12,7 +12,7 @@ namespace GameApplication
         {
             get => _zoom; set => _zoom = value > 0 ? value : 0;
         }
-        private readonly Vector2 _origin = new Vector2(viewportAdapter.VirtualWidth / 2f, viewportAdapter.VirtualHeight / 2f);
+        private readonly Vector2 _origin = new(viewportAdapter.VirtualWidth / 2, viewportAdapter.VirtualHeight / 2);
 
         public Matrix GetViewMatrix()
         {
@@ -46,7 +46,7 @@ namespace GameApplication
 
         public void LookAt(Vector2 position)
         {
-            Position = position - new Vector2(_viewportAdapter.VirtualWidth / 2f, _viewportAdapter.VirtualHeight / 2f);
+            Position = position - new Vector2(_viewportAdapter.VirtualWidth / 2, _viewportAdapter.VirtualHeight / 2);
         }
 
         public Vector2 WorldToScreen(float x, float y)

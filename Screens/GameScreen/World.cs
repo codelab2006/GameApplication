@@ -19,7 +19,7 @@ namespace GameApplication
             {
                 for (int j = 0; j != _world.GetLength(1); j++)
                 {
-                    _world[i, j] = new Unit(UnitBG.DIRT);
+                    _world[i, j] = new Unit(UnitBG.STONE);
                 }
             }
             Width = _world.GetLength(1) * Constants.UnitWidth;
@@ -33,6 +33,11 @@ namespace GameApplication
 
         public void Draw(SpriteBatch spriteBatch, Vector2 position)
         {
+            Draw(spriteBatch, position, null);
+        }
+
+        public void Draw(SpriteBatch spriteBatch, Vector2 position, (int vTFrom, int vTTo, int vBFrom, int vBTo, int hLFrom, int hLTo, int hRFrom, int hRTo)? highlightRange)
+        {
             if (_texture2D is null) return;
 
             var (vFrom, vTo, hFrom, hTo) = Global.GetDrawableRange(position);
@@ -44,7 +49,14 @@ namespace GameApplication
                     var unit = _world[i, j];
                     if (unit is not null)
                     {
-                        spriteBatch.Draw(_texture2D, new Vector2(j * Constants.UnitWidth, i * Constants.UnitHeight), new Rectangle((int)unit.BG * Constants.UnitWidth, 0, Constants.UnitWidth, Constants.UnitHeight), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+                        Color color = Color.White;
+                        if (highlightRange.HasValue &&
+                            ((i >= highlightRange.Value.vTFrom && i < highlightRange.Value.vBTo && ((j >= highlightRange.Value.hLFrom && j < highlightRange.Value.hLTo) || (j >= highlightRange.Value.hRFrom && j < highlightRange.Value.hRTo))) ||
+                            (j >= highlightRange.Value.hLFrom && j < highlightRange.Value.hRTo && ((i >= highlightRange.Value.vTFrom && i < highlightRange.Value.vTTo) || (i >= highlightRange.Value.vBFrom && i < highlightRange.Value.vBTo))))
+                        )
+                            color = Color.Black;
+
+                        spriteBatch.Draw(_texture2D, new Vector2(j * Constants.UnitWidth, i * Constants.UnitHeight), new Rectangle((int)unit.BG * Constants.UnitWidth, 0, Constants.UnitWidth, Constants.UnitHeight), color, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
                     }
                 }
             }
