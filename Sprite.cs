@@ -20,19 +20,6 @@ namespace GameApplication
             (int)(_sourceRectangle.Width * Scale.X),
             (int)(_sourceRectangle.Height * Scale.Y)
         );
-        public Rectangle RectangleWithMargin
-        {
-            get
-            {
-                var rectangle = Rectangle;
-                rectangle.X -= Constants.CollisionMargin;
-                rectangle.Y -= Constants.CollisionMargin;
-                rectangle.Width += Constants.CollisionMargin * 2;
-                rectangle.Height += Constants.CollisionMargin * 2;
-
-                return rectangle;
-            }
-        }
 
         public Sprite() : this(null) { }
 

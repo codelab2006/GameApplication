@@ -86,11 +86,8 @@ namespace GameApplication
 
             if (_player is not null)
             {
-                var rectangleWithMargin = _player.RectangleWithMargin;
-                var (vTFrom, vBTo, hLFrom, hRTo) = Global.GetRange(_player.Position, rectangleWithMargin.Width, rectangleWithMargin.Height);
                 var rectangle = _player.Rectangle;
-                var (vTTo, vBFrom, hLTo, hRFrom) = Global.GetRange(_player.Position, rectangle.Width, rectangle.Height);
-                _world.Draw(_spriteBatch, _position, (vTFrom, vTTo, vBFrom, vBTo, hLFrom, hLTo, hRFrom, hRTo));
+                _world.Draw(_spriteBatch, _position, Global.GetTargetPeripheralUnitsRange(_player.Position, rectangle.Width, rectangle.Height, Constants.CollisionMargin, Constants.UnitHeight, Constants.UnitWidth, Constants.WorldVCount, Constants.WorldHCount));
 
                 // _world.Draw(_spriteBatch, _position);
 

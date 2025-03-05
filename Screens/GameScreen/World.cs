@@ -40,7 +40,7 @@ namespace GameApplication
         {
             if (_texture2D is null) return;
 
-            var (vFrom, vTo, hFrom, hTo) = Global.GetDrawableRange(position);
+            var (vFrom, vTo, hFrom, hTo) = Global.GetDrawableRange(position, Constants.VirtualWidth, Constants.VirtualHeight, Constants.UnitHeight, Constants.UnitWidth, Constants.WorldVCount, Constants.WorldHCount);
 
             for (int i = vFrom; i < vTo; i++)
             {
