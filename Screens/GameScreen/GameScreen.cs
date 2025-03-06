@@ -1,6 +1,5 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace GameApplication
 {
@@ -11,8 +10,6 @@ namespace GameApplication
         private Player? _player;
 
         private readonly FPS _fps = new();
-
-        private bool _debugKeyDown = false;
 
         public override void Initialize()
         {
@@ -34,45 +31,18 @@ namespace GameApplication
                 Position = _position,
             };
 
-            Global.Camera.LookAt(_player.Position);
+            Global.Camera.LookAt(_position);
 
             base.LoadContent();
-        }
-
-        private void Move(Vector2 direction)
-        {
-            _position += Vector2.Transform(direction, Matrix.CreateRotationZ(0));
         }
 
         public override void Update(GameTime gameTime)
         {
             if (_player is not null)
             {
-                var direction = Vector2.Zero;
-                var state = Keyboard.GetState();
-                if (state.IsKeyDown(Keys.W) || state.IsKeyDown(Keys.S) || state.IsKeyDown(Keys.A) || state.IsKeyDown(Keys.D))
-                {
-                    if (state.IsKeyDown(Keys.W)) direction -= Vector2.UnitY;
-                    if (state.IsKeyDown(Keys.S)) direction += Vector2.UnitY;
-                    if (state.IsKeyDown(Keys.A)) direction -= Vector2.UnitX;
-                    if (state.IsKeyDown(Keys.D)) direction += Vector2.UnitX;
-                    Move(direction * (int)(240 * gameTime.GetElapsedSeconds()));
-                }
-                if (!_debugKeyDown && (state.IsKeyDown(Keys.Up) || state.IsKeyDown(Keys.Down) || state.IsKeyDown(Keys.Left) || state.IsKeyDown(Keys.Right)))
-                {
-                    if (state.IsKeyDown(Keys.Up)) direction -= Vector2.UnitY;
-                    if (state.IsKeyDown(Keys.Down)) direction += Vector2.UnitY;
-                    if (state.IsKeyDown(Keys.Left)) direction -= Vector2.UnitX;
-                    if (state.IsKeyDown(Keys.Right)) direction += Vector2.UnitX;
-                    Move(direction);
-                    _debugKeyDown = true;
-                }
-                if (state.IsKeyUp(Keys.Up) && state.IsKeyUp(Keys.Down) && state.IsKeyUp(Keys.Left) && state.IsKeyUp(Keys.Right))
-                    _debugKeyDown = false;
-
-
-                _player.Position = _position;
-                Global.Camera.LookAt(_player.Position);
+                _player.Update(gameTime);
+                _position = _player.Position;
+                Global.Camera.LookAt(_position);
             }
 
             _fps.Update(gameTime);
@@ -87,7 +57,7 @@ namespace GameApplication
             if (_player is not null)
             {
                 var rectangle = _player.Rectangle;
-                _world.Draw(_spriteBatch, _position, Global.GetTargetPeripheralUnitsRange(_player.Position, rectangle.Width, rectangle.Height, Constants.CollisionMargin, Constants.UnitHeight, Constants.UnitWidth, Constants.WorldVCount, Constants.WorldHCount));
+                _world.Draw(_spriteBatch, _position, Global.GetTargetPeripheralUnitsRange(_position, rectangle.Width, rectangle.Height, Constants.CollisionMargin, Constants.UnitHeight, Constants.UnitWidth, Constants.WorldVCount, Constants.WorldHCount));
 
                 // _world.Draw(_spriteBatch, _position);
 

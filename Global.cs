@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
@@ -65,6 +66,16 @@ namespace GameApplication
             if (hTo > totalHCount) hTo = totalHCount;
             if (hTo < 0) hTo = 0;
             return (vFrom, vTo, hFrom, hTo);
+        }
+
+        public static Vector2 UpdateVelocityByGravityAndElapsedSeconds(Vector2 velocity, Vector2 gravityAcceleration, float elapsedSeconds, int? maxVerticalVelocity)
+        {
+            velocity += gravityAcceleration * elapsedSeconds;
+
+            if (maxVerticalVelocity is not null && Math.Abs(velocity.Y) > maxVerticalVelocity)
+                velocity.Y = (float)(Math.Sign(velocity.Y) * maxVerticalVelocity);
+
+            return velocity;
         }
     }
 }

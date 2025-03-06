@@ -1,3 +1,5 @@
+using Microsoft.Xna.Framework;
+
 namespace GameApplication
 {
     public static class Constants
@@ -13,8 +15,17 @@ namespace GameApplication
 
         public const int CollisionMargin = 8;
 
+        public const int MaxHorizontalVelocity = 8;
+
+        public const int MaxVerticalVelocity = 8;
+
+        public const float InitialHorizontalAcceleration = 4;
+
+        public static readonly Vector2 GravityAcceleration = Vector2.Zero;
+
         static Constants()
         {
+            GravityAcceleration = new Vector2(0, 6f);
         }
 
         public static void Initialize() { }
