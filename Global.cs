@@ -18,11 +18,6 @@ namespace GameApplication
         public static Camera Camera { set; get; }
         public static ScreenManager ScreenManager { set; get; }
 
-        public static (int vFrom, int vTo, int hFrom, int hTo) GetDrawableRange(Vector2 center, int virtualWidth, int virtualHeight, int unitHeight, int unitWidth, int totalVCount, int totalHCount)
-        {
-            return GetTargetUnitsRange(center, virtualWidth, virtualHeight, unitHeight, unitWidth, totalVCount, totalHCount);
-        }
-
         public static (int vTFrom, int vTTo, int vBFrom, int vBTo, int hLFrom, int hLTo, int hRFrom, int hRTo) GetTargetPeripheralUnitsRange(Vector2 center, int width, int height, int margin, int unitHeight, int unitWidth, int totalVCount, int totalHCount)
         {
             var (vTFrom, vBTo, hLFrom, hRTo) = GetTargetUnitsRange(center, width + margin * 2, height + margin * 2, unitHeight, unitWidth, totalVCount, totalHCount);
