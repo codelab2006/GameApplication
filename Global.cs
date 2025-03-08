@@ -68,9 +68,9 @@ namespace GameApplication
             return (vFrom, vTo, hFrom, hTo);
         }
 
-        public static Vector2 UpdateVelocityByGravityAndElapsedSeconds(Vector2 velocity, Vector2 gravityAcceleration, float elapsedSeconds, int? maxVerticalVelocity)
+        public static Vector2 UpdateVelocityByGravity(Vector2 velocity, Vector2 gravityAcceleration, int? maxVerticalVelocity)
         {
-            velocity += gravityAcceleration * elapsedSeconds;
+            velocity += gravityAcceleration;
 
             if (maxVerticalVelocity is not null && Math.Abs(velocity.Y) > maxVerticalVelocity)
                 velocity.Y = (float)(Math.Sign(velocity.Y) * maxVerticalVelocity);

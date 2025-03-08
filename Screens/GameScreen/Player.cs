@@ -25,7 +25,7 @@ namespace GameApplication
                 if (state.IsKeyDown(Keys.Left)) _velocity -= Vector2.UnitX;
                 if (state.IsKeyDown(Keys.Right)) _velocity += Vector2.UnitX;
                 _debugKeyDown = true;
-                Move(_velocity);
+                Move(_velocity, 1);
                 _velocity = Vector2.Zero;
             }
             return _debugKeyDown;
@@ -35,26 +35,28 @@ namespace GameApplication
         {
             if (DebugPosition()) return;
 
-            // _velocity = Global.UpdateVelocityByGravityAndElapsedSeconds(_velocity, Constants.GravityAcceleration, gameTime.GetElapsedSeconds(), Constants.MaxVerticalVelocity);
+            // _velocity = Global.UpdateVelocityByGravityAndElapsedSeconds(_velocity, Constants.GravityAcceleration, Constants.MaxVerticalVelocity);
 
-            var velocity = Vector2.Zero;
+            var direction = Vector2.Zero;
             var state = Keyboard.GetState();
-            if (state.IsKeyDown(Keys.A) || state.IsKeyDown(Keys.D))
+            if ((state.IsKeyUp(Keys.A) && state.IsKeyUp(Keys.D)) || (state.IsKeyDown(Keys.A) && state.IsKeyDown(Keys.D)))
             {
-                if (state.IsKeyDown(Keys.A)) velocity -= Vector2.UnitX;
-                if (state.IsKeyDown(Keys.D)) velocity += Vector2.UnitX;
-                _velocity += velocity * Constants.InitialHorizontalAcceleration * gameTime.GetElapsedSeconds();
+                if (Math.Abs(_velocity.X) > 0) _velocity.X *= 1 - Constants.FrictionCoefficient;
+                if (Math.Abs(_velocity.X) < 1) _velocity.X = 0;
+            }
+            else
+            {
+                if (state.IsKeyDown(Keys.A)) direction -= Vector2.UnitX;
+                if (state.IsKeyDown(Keys.D)) direction += Vector2.UnitX;
+                _velocity += direction * Constants.InitialHorizontalAcceleration;
                 if (Math.Abs(_velocity.X) > Constants.MaxHorizontalVelocity) _velocity.X = Math.Sign(_velocity.X) * Constants.MaxHorizontalVelocity;
             }
-
-            Console.WriteLine(_velocity);
-
-            Move(_velocity);
+            Move(_velocity, gameTime.GetElapsedSeconds());
         }
 
-        private void Move(Vector2 velocity)
+        private void Move(Vector2 velocity, float elapsedSeconds)
         {
-            Position += velocity;
+            Position += velocity * elapsedSeconds;
         }
     }
 }
