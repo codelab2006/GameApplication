@@ -15,7 +15,9 @@ namespace GameApplication
         {
             _world.Initialize();
 
-            _position = new Vector2(_world.Width / 2, _world.Height / 2);
+            Global.World = _world;
+
+            _position = new Vector2(_world.Width / 2, 0);
 
             base.Initialize();
         }
@@ -38,7 +40,7 @@ namespace GameApplication
 
         public override void Update(GameTime gameTime)
         {
-            if (_player is not null)
+            if (_player != null)
             {
                 _player.Update(gameTime);
                 _position = _player.Position;
@@ -54,7 +56,7 @@ namespace GameApplication
         {
             _spriteBatch.Begin(transformMatrix: Global.Camera.GetViewMatrix());
 
-            if (_player is not null)
+            if (_player != null)
             {
                 var rectangle = _player.Rectangle;
                 _world.Draw(_spriteBatch, _position, Global.GetTargetPeripheralUnitsRange(_position, rectangle.Width, rectangle.Height, Constants.CollisionMargin, Constants.UnitHeight, Constants.UnitWidth, Constants.WorldVCount, Constants.WorldHCount));

@@ -14,12 +14,7 @@ namespace GameApplication
         public Vector2 Scale { get; set; } = Vector2.One;
         public SpriteEffects Effects { get; set; } = SpriteEffects.None;
         public float LayerDepth { get; set; } = 0;
-        public Rectangle Rectangle => new(
-            (int)(Position.X - Origin.X * Scale.X),
-            (int)(Position.Y - Origin.Y * Scale.Y),
-            (int)(_sourceRectangle.Width * Scale.X),
-            (int)(_sourceRectangle.Height * Scale.Y)
-        );
+        public Rectangle Rectangle => GetRectangleByPosition(Position);
 
         public Sprite() : this(null) { }
 
@@ -41,13 +36,23 @@ namespace GameApplication
 
         public void Draw(SpriteBatch spriteBatch, Vector2? position)
         {
-            if (_texture2D is not null)
+            if (_texture2D != null)
                 Draw(spriteBatch, _texture2D, position);
         }
 
         public void Draw(SpriteBatch spriteBatch, Texture2D texture2D, Vector2? position)
         {
             spriteBatch.Draw(texture2D, position ?? Position, _sourceRectangle, Color, Rotation, Origin, Scale, Effects, LayerDepth);
+        }
+
+        public Rectangle GetRectangleByPosition(Vector2 position)
+        {
+            return new Rectangle(
+                (int)(position.X - Origin.X * Scale.X),
+                (int)(position.Y - Origin.Y * Scale.Y),
+                (int)(_sourceRectangle.Width * Scale.X),
+                (int)(_sourceRectangle.Height * Scale.Y)
+            );
         }
     }
 }

@@ -12,18 +12,18 @@ namespace GameApplication
 
         private void SetScreen(Screen? screen)
         {
-            if (_screen is not null)
+            if (_screen != null)
                 _game.Components.Remove(_screen);
             _screen?.Exit();
             _screen = screen;
             _screen?.Enter();
-            if (_screen is not null)
+            if (_screen != null)
                 _game.Components.Add(_screen);
         }
 
         public void GoTo(string screenName)
         {
-            if (_screen is null || screenName != _screen.GetType().Name)
+            if (_screen == null || screenName != _screen.GetType().Name)
                 SetScreen(_screens[screenName]);
         }
     }

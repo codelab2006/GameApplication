@@ -35,7 +35,7 @@ namespace GameApplication
         public void Draw()
         {
             _spriteBatch.Begin(transformMatrix: Global.ViewportAdapter.GetScaleMatrix());
-            _spriteBatch.DrawString(_font, $"FPS: {_frameRate}", new Vector2(10, 10), Color.White, 0, Vector2.Zero, 2, SpriteEffects.None, 0);
+            _spriteBatch.DrawString(_font, $"FPS: {_frameRate}", new Vector2(0, 0), Color.Blue, 0, Vector2.Zero, 2, SpriteEffects.None, 0);
             _spriteBatch.End();
         }
     }

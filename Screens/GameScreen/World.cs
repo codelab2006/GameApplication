@@ -5,8 +5,7 @@ namespace GameApplication
 {
     public class World
     {
-        private Unit[,] _world = new Unit[0, 0];
-
+        public Unit[,] Units { get; private set; } = new Unit[0, 0];
         public int Width { get; private set; } = 0;
         public int Height { get; private set; } = 0;
 
@@ -14,16 +13,16 @@ namespace GameApplication
 
         public void Initialize()
         {
-            _world = new Unit[Constants.WorldVCount, Constants.WorldHCount];
-            for (int i = _world.GetLength(0) / 2 + 5; i != _world.GetLength(0); i++)
+            Units = new Unit[Constants.WorldVCount, Constants.WorldHCount];
+            for (int i = Units.GetLength(0) / 2 + 5; i != Units.GetLength(0); i++)
             {
-                for (int j = 0; j != _world.GetLength(1); j++)
+                for (int j = 0; j != Units.GetLength(1); j++)
                 {
-                    _world[i, j] = new Unit(UnitBG.STONE);
+                    Units[i, j] = new Unit(UnitFG.STONE);
                 }
             }
-            Width = _world.GetLength(1) * Constants.UnitWidth;
-            Height = _world.GetLength(0) * Constants.UnitHeight;
+            Width = Units.GetLength(1) * Constants.UnitWidth;
+            Height = Units.GetLength(0) * Constants.UnitHeight;
         }
 
         public void LoadContent()
@@ -38,7 +37,7 @@ namespace GameApplication
 
         public void Draw(SpriteBatch spriteBatch, Vector2 position, (int vTFrom, int vTTo, int vBFrom, int vBTo, int hLFrom, int hLTo, int hRFrom, int hRTo)? highlightRange)
         {
-            if (_texture2D is null) return;
+            if (_texture2D == null) return;
 
             var (vFrom, vTo, hFrom, hTo) = Global.GetTargetUnitsRange(position, Constants.VirtualWidth, Constants.VirtualHeight, Constants.UnitHeight, Constants.UnitWidth, Constants.WorldVCount, Constants.WorldHCount);
 
@@ -46,8 +45,8 @@ namespace GameApplication
             {
                 for (int j = hFrom; j < hTo; j++)
                 {
-                    var unit = _world[i, j];
-                    if (unit is not null)
+                    var unit = Units[i, j];
+                    if (unit != null)
                     {
                         Color color = Color.White;
                         if (highlightRange.HasValue &&
@@ -56,7 +55,7 @@ namespace GameApplication
                         )
                             color = Color.Black;
 
-                        spriteBatch.Draw(_texture2D, new Vector2(j * Constants.UnitWidth, i * Constants.UnitHeight), new Rectangle((int)unit.BG * Constants.UnitWidth, 0, Constants.UnitWidth, Constants.UnitHeight), color, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+                        spriteBatch.Draw(_texture2D, new Vector2(j * Constants.UnitWidth, i * Constants.UnitHeight), new Rectangle((int)unit.FG * Constants.UnitWidth, 0, Constants.UnitWidth, Constants.UnitHeight), color, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
                     }
                 }
             }

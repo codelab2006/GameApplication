@@ -60,6 +60,8 @@ namespace GameApplication
 
         protected override void Update(GameTime gameTime)
         {
+            if (gameTime.GetElapsedSeconds() == 0) return;
+
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
@@ -83,6 +85,8 @@ namespace GameApplication
 
         protected override void Draw(GameTime gameTime)
         {
+            if (gameTime.GetElapsedSeconds() == 0) return;
+
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             base.Draw(gameTime);

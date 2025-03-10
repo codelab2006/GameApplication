@@ -10,24 +10,26 @@ namespace GameApplication
         public const int UnitWidth = 16;
         public const int UnitHeight = 16;
 
-        public const int WorldHCount = 10000;
-        public const int WorldVCount = 5000;
+        public const int WorldHCount = 100;
+        public const int WorldVCount = 50;
 
-        public const int CollisionMargin = 8;
+        public const int CollisionMargin = 16;
 
-        public const int MaxHorizontalVelocity = 300;
+        public const int CollisionStep = 8;
 
-        public const int MaxVerticalVelocity = 300;
+        public const int MaxHorizontalVelocity = 512;
 
-        public const float InitialHorizontalAcceleration = 10f;
+        public const int MaxVerticalVelocity = 512;
 
-        public const float FrictionCoefficient = 0.5f;
+        public const float InitialHorizontalAcceleration = 8f;
+
+        public const float FrictionCoefficient = 0.25f;
 
         public static readonly Vector2 GravityAcceleration = Vector2.Zero;
 
         static Constants()
         {
-            GravityAcceleration = new Vector2(0, 10f);
+            GravityAcceleration = new Vector2(0, 8f);
         }
 
         public static void Initialize() { }

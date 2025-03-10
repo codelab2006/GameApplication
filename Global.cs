@@ -18,6 +18,7 @@ namespace GameApplication
         public static ViewportAdapter ViewportAdapter { set; get; }
         public static Camera Camera { set; get; }
         public static ScreenManager ScreenManager { set; get; }
+        public static World World { get; set; }
 
         public static (int vTFrom, int vTTo, int vBFrom, int vBTo, int hLFrom, int hLTo, int hRFrom, int hRTo) GetTargetPeripheralUnitsRange(Vector2 center, int width, int height, int margin, int unitHeight, int unitWidth, int totalVCount, int totalHCount)
         {
@@ -26,23 +27,43 @@ namespace GameApplication
             return (vTFrom, vTTo, vBFrom, vBTo, hLFrom, hLTo, hRFrom, hRTo);
         }
 
-        public static (int v, int h)[] GetTargetPeripheralUnitsIndexes(Vector2 center, int width, int height, int margin, int unitHeight, int unitWidth, int totalVCount, int totalHCount)
+        public static ((int v, int h)[] v, (int v, int h)[] h) GetTargetVHPeripheralUnitsIndexes(Vector2 center, int width, int height, int margin, int unitHeight, int unitWidth, int totalVCount, int totalHCount)
         {
-            var (vTFrom, vTTo, vBFrom, vBTo, hLFrom, hLTo, hRFrom, hRTo) = GetTargetPeripheralUnitsRange(center, width, height, margin, unitHeight, unitWidth, totalVCount, totalHCount);
-            int estimatedCount = (vBTo - vTFrom) * (hRTo - hLFrom);
-            var result = new List<(int i, int j)>(estimatedCount);
+            var (vTFrom, vBTo) = GetTargetVUnitsRange(center, height + margin * 2, unitHeight, totalVCount);
+            var (hLFrom, hRTo) = GetTargetHUnitsRange(center, width + margin * 2, unitWidth, totalHCount);
+            var (vTTo, vBFrom, hLTo, hRFrom) = GetTargetUnitsRange(center, width, height, unitHeight, unitWidth, totalVCount, totalHCount);
+
+            var vResult = new List<(int i, int j)>((vBTo - vTFrom) * (hRFrom - hLTo));
             for (int i = vTFrom; i < vBTo; i++)
             {
-                for (int j = hLFrom; j < hRTo; j++)
+                for (int j = hLTo; j < hRFrom; j++)
                 {
-                    if ((i >= vTFrom && i < vBTo && ((j >= hLFrom && j < hLTo) || (j >= hRFrom && j < hRTo))) || (j >= hLFrom && j < hRTo && ((i >= vTFrom && i < vTTo) || (i >= vBFrom && i < vBTo))))
-                        result.Add((i, j));
+                    if (j >= hLTo && j < hRFrom && ((i >= vTFrom && i < vTTo) || (i >= vBFrom && i < vBTo)))
+                        vResult.Add((i, j));
                 }
             }
-            return [.. result];
+
+            var hResult = new List<(int i, int j)>((vBFrom - vTTo) * (hRTo - hLFrom));
+            for (int j = hLFrom; j < hRTo; j++)
+            {
+                for (int i = vTTo; i < vBFrom; i++)
+                {
+                    if (i >= vTTo && i < vBFrom && ((j >= hLFrom && j < hLTo) || (j >= hRFrom && j < hRTo)))
+                        hResult.Add((i, j));
+                }
+            }
+
+            return (v: [.. vResult], h: [.. hResult]);
         }
 
         public static (int vFrom, int vTo, int hFrom, int hTo) GetTargetUnitsRange(Vector2 center, int width, int height, int unitHeight, int unitWidth, int totalVCount, int totalHCount)
+        {
+            var (vFrom, vTo) = GetTargetVUnitsRange(center, height, unitHeight, totalVCount);
+            var (hFrom, hTo) = GetTargetHUnitsRange(center, width, unitWidth, totalHCount);
+            return (vFrom, vTo, hFrom, hTo);
+        }
+
+        public static (int vFrom, int vTo) GetTargetVUnitsRange(Vector2 center, int height, int unitHeight, int totalVCount)
         {
             int vFromPixel = (int)center.Y - height / 2;
             int vFrom = vFromPixel / unitHeight;
@@ -54,7 +75,11 @@ namespace GameApplication
             if (vTo * unitHeight < vToPixel) vTo += 1;
             if (vTo > totalVCount) vTo = totalVCount;
             if (vTo < 0) vTo = 0;
+            return (vFrom, vTo);
+        }
 
+        public static (int hFrom, int hTo) GetTargetHUnitsRange(Vector2 center, int width, int unitWidth, int totalHCount)
+        {
             int hFromPixel = (int)center.X - width / 2;
             int hFrom = hFromPixel / unitWidth;
             if (hFrom < 0) hFrom = 0;
@@ -65,17 +90,118 @@ namespace GameApplication
             if (hTo * unitWidth < hToPixel) hTo += 1;
             if (hTo > totalHCount) hTo = totalHCount;
             if (hTo < 0) hTo = 0;
-            return (vFrom, vTo, hFrom, hTo);
+            return (hFrom, hTo);
         }
 
         public static Vector2 UpdateVelocityByGravity(Vector2 velocity, Vector2 gravityAcceleration, int? maxVerticalVelocity)
         {
             velocity += gravityAcceleration;
 
-            if (maxVerticalVelocity is not null && Math.Abs(velocity.Y) > maxVerticalVelocity)
+            if (maxVerticalVelocity != null && Math.Abs(velocity.Y) > maxVerticalVelocity)
                 velocity.Y = (float)(Math.Sign(velocity.Y) * maxVerticalVelocity);
 
             return velocity;
+        }
+
+        public static Vector2 Move(Vector2 position, Vector2 velocity, float elapsedSeconds)
+        {
+            return position + velocity * elapsedSeconds;
+        }
+
+        public static Vector2 Move(Vector2 position, Vector2 velocity)
+        {
+            return position + velocity;
+        }
+
+        public static (Vector2 position, bool tCollision, bool bCollision, bool lCollision, bool rCollision) MoveBasedOnSurroundings(
+                Vector2 currentPosition,
+                Vector2 velocity,
+                int collisionStep,
+                Func<Vector2, Rectangle> getRectangle,
+                int margin, int unitHeight, int unitWidth, int totalVCount, int totalHCount,
+                IUnit[,] units,
+                float elapsedSeconds)
+        {
+            bool tCollision = false, bCollision = false, lCollision = false, rCollision = false;
+            if (velocity != Vector2.Zero)
+            {
+                var frameVelocity = velocity * elapsedSeconds;
+                var newPosition = Move(currentPosition, frameVelocity);
+                var normalizedV = Vector2.Normalize(frameVelocity);
+                Vector2 stepVelocity = normalizedV * collisionStep * elapsedSeconds;
+                if (stepVelocity.LengthSquared() > frameVelocity.LengthSquared()) stepVelocity = frameVelocity;
+
+                float? newPositionY = null, newPositionX = null;
+                var rectangle = getRectangle(currentPosition);
+                int rectWidth = rectangle.Width, rectHeight = rectangle.Height;
+                var (vIndexes, hIndexes) = GetTargetVHPeripheralUnitsIndexes(rectangle.Center.ToVector2(),
+                    rectWidth,
+                    rectHeight,
+                    margin,
+                    unitHeight,
+                    unitWidth,
+                    totalVCount,
+                    totalHCount
+                );
+                while ((stepVelocity.LengthSquared() <= frameVelocity.LengthSquared()) &&
+                       ((stepVelocity.Y > 0 && !bCollision) || (stepVelocity.Y < 0 && !tCollision) || (stepVelocity.X > 0 && !rCollision) || (stepVelocity.X < 0 && !lCollision)))
+                {
+                    var stepRectangle = getRectangle(Move(currentPosition, stepVelocity));
+
+                    foreach (var (vi, hi) in vIndexes)
+                    {
+                        IUnit? unit = units[vi, hi];
+                        if (unit == null || !unit.IsStatic) continue;
+
+                        var uRectangle = new Rectangle(hi * unitWidth, vi * unitHeight, unitWidth, unitHeight);
+                        if (!uRectangle.Intersects(stepRectangle)) continue;
+                        if (stepVelocity.Y > 0 && uRectangle.Center.Y > stepRectangle.Center.Y)
+                        {
+                            newPositionY = newPositionY.HasValue ? Math.Min(newPositionY.Value, uRectangle.Top - rectHeight / 2) : uRectangle.Top - rectHeight / 2;
+                            bCollision = true;
+                        }
+
+                        if (stepVelocity.Y < 0 && uRectangle.Center.Y < stepRectangle.Center.Y)
+                        {
+                            newPositionY = newPositionY.HasValue ? Math.Max(newPositionY.Value, uRectangle.Bottom + rectHeight / 2) : uRectangle.Bottom + rectHeight / 2;
+                            tCollision = true;
+                        }
+                    }
+
+                    foreach (var (vi, hi) in hIndexes)
+                    {
+                        IUnit? unit = units[vi, hi];
+                        if (unit == null || !unit.IsStatic) continue;
+
+                        var uRectangle = new Rectangle(hi * unitWidth, vi * unitHeight, unitWidth, unitHeight);
+                        if (!uRectangle.Intersects(stepRectangle)) continue;
+                        if (stepVelocity.X > 0 && uRectangle.Center.X > stepRectangle.Center.X)
+                        {
+                            newPositionX = newPositionX.HasValue ? Math.Min(newPositionX.Value, uRectangle.Left - rectWidth / 2) : uRectangle.Left - rectWidth / 2;
+                            rCollision = true;
+                        }
+                        if (stepVelocity.X < 0 && uRectangle.Center.X < stepRectangle.Center.X)
+                        {
+                            newPositionX = newPositionX.HasValue ? Math.Max(newPositionX.Value, uRectangle.Right + rectWidth / 2) : uRectangle.Right + rectWidth / 2;
+                            lCollision = true;
+                        }
+                    }
+
+                    if ((newPositionY.HasValue && newPositionX.HasValue) || stepVelocity.LengthSquared() == frameVelocity.LengthSquared()) break;
+
+                    stepVelocity += normalizedV * collisionStep * elapsedSeconds;
+                    if (stepVelocity.LengthSquared() > frameVelocity.LengthSquared()) stepVelocity = frameVelocity;
+                }
+
+                if (newPositionY != null) newPosition.Y = (float)newPositionY;
+                if (newPositionX != null) newPosition.X = (float)newPositionX;
+
+                return (newPosition, tCollision, bCollision, lCollision, rCollision);
+            }
+            else
+            {
+                return (currentPosition, tCollision, bCollision, lCollision, rCollision);
+            }
         }
     }
 }
