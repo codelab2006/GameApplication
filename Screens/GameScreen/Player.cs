@@ -83,11 +83,9 @@ namespace GameApplication
 
             if ((_tCollision && _velocity.Y < 0) || (_bCollision && _velocity.Y > 0))
                 _velocity.Y = 0;
+
             if ((_lCollision && _velocity.X < 0) || (_rCollision && _velocity.X > 0))
                 _velocity.X = 0;
-
-            Console.WriteLine(Position);
-            Console.WriteLine(_velocity);
         }
     }
 }
