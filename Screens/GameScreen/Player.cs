@@ -38,11 +38,12 @@ namespace GameApplication
         public void Update(GameTime gameTime)
         {
             if (DebugPosition()) return;
+            var state = Keyboard.GetState();
 
             _velocity = Global.UpdateVelocityByGravity(_velocity, Constants.GravityAcceleration, Constants.MaxVerticalVelocity);
 
-            var state = Keyboard.GetState();
-            if ((state.IsKeyUp(Keys.A) && state.IsKeyUp(Keys.D)) || (state.IsKeyDown(Keys.A) && state.IsKeyDown(Keys.D)))
+            if ((state.IsKeyUp(Keys.A) && state.IsKeyUp(Keys.D)) || (state.IsKeyDown(Keys.A) && state.IsKeyDown(Keys.D)) ||
+                (_velocity.X > 0 && state.IsKeyDown(Keys.A)) || (_velocity.X < 0 && state.IsKeyDown(Keys.D)))
             {
                 if (Math.Abs(_velocity.X) > 0) _velocity.X *= 1 - Constants.FrictionCoefficient;
                 if (Math.Abs(_velocity.X) < 1) _velocity.X = 0;
@@ -60,11 +61,14 @@ namespace GameApplication
                 if (Math.Abs(_velocity.X) > Constants.MaxHorizontalVelocity) _velocity.X = Math.Sign(_velocity.X) * Constants.MaxHorizontalVelocity;
             }
 
+            Console.WriteLine(_velocity);
+
             var (position, tCollision, bCollision, lCollision, rCollision) = Global.MoveBasedOnSurroundings(
                 Position,
                 _velocity,
                 Constants.CollisionStep,
                 GetRectangleByPosition,
+                GetCollisionRectangleByPosition,
                 Constants.CollisionMargin,
                 Constants.UnitHeight,
                 Constants.UnitWidth,
@@ -80,6 +84,8 @@ namespace GameApplication
             _rCollision = rCollision;
 
             Position = position;
+
+            Console.WriteLine($"{Position}, {_tCollision}, {_bCollision}, {_lCollision}, {_rCollision}");
 
             if ((_tCollision && _velocity.Y < 0) || (_bCollision && _velocity.Y > 0))
                 _velocity.Y = 0;

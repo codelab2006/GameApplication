@@ -54,5 +54,15 @@ namespace GameApplication
                 (int)(_sourceRectangle.Height * Scale.Y)
             );
         }
+
+        public CollisionRectangle GetCollisionRectangleByPosition(Vector2 position)
+        {
+            return new CollisionRectangle(
+                position.X - Origin.X * Scale.X,
+                position.Y - Origin.Y * Scale.Y,
+                _sourceRectangle.Width * Scale.X,
+                _sourceRectangle.Height * Scale.Y
+            );
+        }
     }
 }
