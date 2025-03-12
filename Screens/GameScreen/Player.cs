@@ -42,8 +42,23 @@ namespace GameApplication
 
             _velocity = Global.UpdateVelocityByGravity(_velocity, Constants.GravityAcceleration, Constants.MaxVerticalVelocity);
 
-            if ((state.IsKeyUp(Keys.A) && state.IsKeyUp(Keys.D)) || (state.IsKeyDown(Keys.A) && state.IsKeyDown(Keys.D)) ||
-                (_velocity.X > 0 && state.IsKeyDown(Keys.A)) || (_velocity.X < 0 && state.IsKeyDown(Keys.D)))
+            if (state.IsKeyDown(Keys.Space))
+            {
+                var direction = Vector2.Zero - Vector2.UnitY;
+                if (_bCollision)
+                    _velocity += direction * Constants.InitialUpAcceleration;
+
+                // if (true)
+                // {
+                //     _velocity += direction * Constants.InitialUpAcceleration;
+                // }
+
+                if (Math.Abs(_velocity.Y) > Constants.MaxVerticalVelocity) _velocity.Y = Math.Sign(_velocity.Y) * Constants.MaxVerticalVelocity;
+            }
+
+            if (_bCollision &&
+                ((state.IsKeyUp(Keys.A) && state.IsKeyUp(Keys.D)) || (state.IsKeyDown(Keys.A) && state.IsKeyDown(Keys.D)) ||
+                (_velocity.X > 0 && state.IsKeyDown(Keys.A)) || (_velocity.X < 0 && state.IsKeyDown(Keys.D))))
             {
                 if (Math.Abs(_velocity.X) > 0) _velocity.X *= 1 - Constants.FrictionCoefficient;
                 if (Math.Abs(_velocity.X) < 1) _velocity.X = 0;
@@ -51,13 +66,9 @@ namespace GameApplication
             else
             {
                 var direction = Vector2.Zero;
-                if (state.IsKeyDown(Keys.W)) direction -= Vector2.UnitY;
-                if (state.IsKeyDown(Keys.S)) direction += Vector2.UnitY;
-
                 if (state.IsKeyDown(Keys.A)) direction -= Vector2.UnitX;
                 if (state.IsKeyDown(Keys.D)) direction += Vector2.UnitX;
                 _velocity += direction * Constants.InitialHorizontalAcceleration;
-                if (Math.Abs(_velocity.Y) > Constants.MaxVerticalVelocity) _velocity.Y = Math.Sign(_velocity.Y) * Constants.MaxVerticalVelocity;
                 if (Math.Abs(_velocity.X) > Constants.MaxHorizontalVelocity) _velocity.X = Math.Sign(_velocity.X) * Constants.MaxHorizontalVelocity;
             }
 
