@@ -27,6 +27,14 @@ namespace GameApplication
 
         public const float FrictionCoefficient = 0.25f;
 
+        public const int PlayerWidth = 21;
+
+        public const int PlayerHeight = 52;
+
+        public const int PlayerRenderTarget2DWidth = 64;
+
+        public const int PlayerRenderTarget2DHeight = 64;
+
         public static readonly Vector2 GravityAcceleration = Vector2.Zero;
 
         static Constants()

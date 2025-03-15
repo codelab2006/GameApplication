@@ -87,7 +87,7 @@ namespace GameApplication
         {
             if (gameTime.GetElapsedSeconds() == 0) return;
 
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             base.Draw(gameTime);
         }

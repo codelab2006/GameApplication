@@ -6,8 +6,19 @@ using Microsoft.Xna.Framework.Input;
 
 namespace GameApplication
 {
-    public class Player(Texture2D? texture2D) : Sprite(texture2D)
+    public class Player : Sprite
     {
+        private readonly RenderTarget2D _renderTarget2D;
+
+        private readonly Vector2 _renderTarget2DOrigin;
+
+        private Texture2D _headTexture2D;
+        private Texture2D _bodyTexture2D;
+        private Texture2D _handLeftTexture2D;
+        private Texture2D _handRightTexture2D;
+        private Texture2D _legLeftTexture2D;
+        private Texture2D _legRightTexture2D;
+
         private Vector2 _velocity = Vector2.Zero;
         private bool _tCollision = false;
         private bool _bCollision = false;
@@ -15,6 +26,30 @@ namespace GameApplication
         private bool _rCollision = false;
 
         private bool _debugKeyDown = false;
+
+        public Player() : base(null, new(0, 0, Constants.PlayerWidth, Constants.PlayerHeight))
+        {
+            _renderTarget2D = new(Global.GraphicsDevice, Constants.PlayerRenderTarget2DWidth, Constants.PlayerRenderTarget2DHeight);
+            _renderTarget2DOrigin = new(_renderTarget2D.Width / 2, _renderTarget2D.Height / 2);
+
+            var o = Global.Content.Load<Texture2D>("o");
+            _headTexture2D = o;
+            _bodyTexture2D = o;
+            _handLeftTexture2D = o;
+            _handRightTexture2D = o;
+            _legLeftTexture2D = o;
+            _legRightTexture2D = o;
+        }
+
+        public void LoadContent()
+        {
+            _headTexture2D = Global.Content.Load<Texture2D>("player/player-head");
+            _bodyTexture2D = Global.Content.Load<Texture2D>("player/player-body");
+            _handLeftTexture2D = Global.Content.Load<Texture2D>("player/player-hand-left");
+            _handRightTexture2D = Global.Content.Load<Texture2D>("player/player-hand-right");
+            _legLeftTexture2D = Global.Content.Load<Texture2D>("player/player-leg-left");
+            _legRightTexture2D = Global.Content.Load<Texture2D>("player/player-leg-right");
+        }
 
         private bool DebugPosition()
         {
@@ -103,6 +138,22 @@ namespace GameApplication
 
             if ((_lCollision && _velocity.X < 0) || (_rCollision && _velocity.X > 0))
                 _velocity.X = 0;
+        }
+
+        public void DrawTarget(SpriteBatch spriteBatch)
+        {
+            var graphicsDevice = Global.GraphicsDevice;
+            graphicsDevice.SetRenderTarget(_renderTarget2D);
+            graphicsDevice.Clear(Color.White);
+            spriteBatch.Begin();
+
+            spriteBatch.End();
+            graphicsDevice.SetRenderTarget(null);
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(_renderTarget2D, Position, _renderTarget2D.Bounds, Color, Rotation, _renderTarget2DOrigin, Scale, Effects, LayerDepth);
         }
     }
 }

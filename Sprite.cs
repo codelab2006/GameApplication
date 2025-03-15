@@ -20,8 +20,6 @@ namespace GameApplication
 
         public Sprite(Texture2D? texture2D) : this(texture2D, null) { }
 
-        public Sprite(int xIndex, int yIndex, int width, int height) : this(null, new Rectangle(xIndex * width, yIndex * height, width, height)) { }
-
         public Sprite(Texture2D? texture2D, Rectangle? sourceRectangle)
         {
             _texture2D = texture2D;
@@ -29,7 +27,7 @@ namespace GameApplication
             Origin = new(_sourceRectangle.Width / 2, _sourceRectangle.Height / 2);
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public virtual void Draw(SpriteBatch spriteBatch)
         {
             Draw(spriteBatch, null);
         }

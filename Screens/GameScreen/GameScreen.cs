@@ -1,5 +1,4 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace GameApplication
 {
@@ -28,10 +27,11 @@ namespace GameApplication
 
             _world.LoadContent();
 
-            _player = new(Global.Content.Load<Texture2D>("player"))
+            _player = new()
             {
                 Position = _position,
             };
+            _player.LoadContent();
 
             Global.Camera.LookAt(_position);
 
@@ -54,19 +54,23 @@ namespace GameApplication
 
         public override void Draw(GameTime gameTime)
         {
-            _spriteBatch.Begin(transformMatrix: Global.Camera.GetViewMatrix());
-
             if (_player != null)
             {
+                _player.DrawTarget(_spriteBatch);
+
+                Global.GraphicsDevice.Clear(Color.CornflowerBlue);
+
+                _spriteBatch.Begin(transformMatrix: Global.Camera.GetViewMatrix());
+
                 var rectangle = _player.Rectangle;
                 _world.Draw(_spriteBatch, _position, Global.GetTargetPeripheralUnitsRange(_position, rectangle.Width, rectangle.Height, Constants.CollisionMargin, Constants.UnitHeight, Constants.UnitWidth, Constants.WorldVCount, Constants.WorldHCount));
 
                 // _world.Draw(_spriteBatch, _position);
 
                 _player?.Draw(_spriteBatch);
-            }
 
-            _spriteBatch.End();
+                _spriteBatch.End();
+            }
 
             _fps.Draw();
 
