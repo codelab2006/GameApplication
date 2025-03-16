@@ -6,18 +6,109 @@ using Microsoft.Xna.Framework.Input;
 
 namespace GameApplication
 {
+    internal class PlayerPart : Sprite
+    {
+        public PlayerPart() { }
+
+        public PlayerPart(Texture2D texture2D, Vector2 position) : base(texture2D)
+        {
+            Position = position;
+        }
+
+        public virtual void Update(float elapsedSeconds) { }
+    }
+
+    internal class PlayerHead : PlayerPart
+    {
+        public PlayerHead() { }
+
+        public PlayerHead(Texture2D texture2D, Vector2 position, PlayerBody playerBody) : base(texture2D, position)
+        {
+            Origin = new(Rectangle.Width / 2, Rectangle.Height);
+            var bodyRectangle = playerBody.Rectangle;
+            position.Y = bodyRectangle.Center.Y - bodyRectangle.Height / 2;
+            Position = position;
+        }
+    }
+
+    internal class PlayerBody : PlayerPart
+    {
+        public PlayerBody() { }
+
+        public PlayerBody(Texture2D texture2D, Vector2 position) : base(texture2D, position)
+        {
+            Position = position;
+        }
+    }
+
+    internal class PlayerLeftHand : PlayerPart
+    {
+        public PlayerLeftHand() { }
+
+        public PlayerLeftHand(Texture2D texture2D, Vector2 position, PlayerBody playerBody) : base(texture2D, position)
+        {
+            Origin = new(3, 0);
+            var bodyRectangle = playerBody.Rectangle;
+            position.X = bodyRectangle.Center.X + bodyRectangle.Width / 2;
+            position.Y = playerBody.Rectangle.Top + 2;
+            Position = position;
+        }
+    }
+
+    internal class PlayerRightHand : PlayerPart
+    {
+        public PlayerRightHand() { }
+
+        public PlayerRightHand(Texture2D texture2D, Vector2 position, PlayerBody playerBody) : base(texture2D, position)
+        {
+            Origin = new(3, 0);
+            var bodyRectangle = playerBody.Rectangle;
+            position.X = bodyRectangle.Center.X - bodyRectangle.Width / 2;
+            position.Y = playerBody.Rectangle.Top + 2;
+            Position = position;
+        }
+    }
+
+    internal class PlayerLeftLeg : PlayerPart
+    {
+        public PlayerLeftLeg() { }
+
+        public PlayerLeftLeg(Texture2D texture2D, Vector2 position, PlayerBody playerBody) : base(texture2D, position)
+        {
+            Origin = new(Rectangle.Width / 2, 0);
+            var bodyRectangle = playerBody.Rectangle;
+            position.X = bodyRectangle.Center.X + 2;
+            position.Y = bodyRectangle.Center.Y + 3;
+            Position = position;
+        }
+    }
+
+    internal class PlayerRightLeg : PlayerPart
+    {
+        public PlayerRightLeg() { }
+
+        public PlayerRightLeg(Texture2D texture2D, Vector2 position, PlayerBody playerBody) : base(texture2D, position)
+        {
+            Origin = new(Rectangle.Width / 2, 0);
+            var bodyRectangle = playerBody.Rectangle;
+            position.X = bodyRectangle.Center.X - 2;
+            position.Y = bodyRectangle.Center.Y + 3;
+            Position = position;
+        }
+    }
+
     public class Player : Sprite
     {
         private readonly RenderTarget2D _renderTarget2D;
 
         private readonly Vector2 _renderTarget2DOrigin;
 
-        private Texture2D _headTexture2D;
-        private Texture2D _bodyTexture2D;
-        private Texture2D _handLeftTexture2D;
-        private Texture2D _handRightTexture2D;
-        private Texture2D _legLeftTexture2D;
-        private Texture2D _legRightTexture2D;
+        private PlayerHead _playerHead = new();
+        private PlayerBody _playerBody = new();
+        private PlayerLeftHand _playerLeftHand = new();
+        private PlayerRightHand _playerRightHand = new();
+        private PlayerLeftLeg _playerLeftLeg = new();
+        private PlayerRightLeg _playerRightLeg = new();
 
         private Vector2 _velocity = Vector2.Zero;
         private bool _tCollision = false;
@@ -29,26 +120,22 @@ namespace GameApplication
 
         public Player() : base(null, new(0, 0, Constants.PlayerWidth, Constants.PlayerHeight))
         {
-            _renderTarget2D = new(Global.GraphicsDevice, Constants.PlayerRenderTarget2DWidth, Constants.PlayerRenderTarget2DHeight);
+            _renderTarget2D = new(Global.GraphicsDevice,
+                Constants.PlayerWidth + Constants.PlayerRenderTarget2DHMargin * 2,
+                Constants.PlayerHeight + Constants.PlayerRenderTarget2DVMargin * 2
+            );
             _renderTarget2DOrigin = new(_renderTarget2D.Width / 2, _renderTarget2D.Height / 2);
-
-            var o = Global.Content.Load<Texture2D>("o");
-            _headTexture2D = o;
-            _bodyTexture2D = o;
-            _handLeftTexture2D = o;
-            _handRightTexture2D = o;
-            _legLeftTexture2D = o;
-            _legRightTexture2D = o;
         }
 
         public void LoadContent()
         {
-            _headTexture2D = Global.Content.Load<Texture2D>("player/player-head");
-            _bodyTexture2D = Global.Content.Load<Texture2D>("player/player-body");
-            _handLeftTexture2D = Global.Content.Load<Texture2D>("player/player-hand-left");
-            _handRightTexture2D = Global.Content.Load<Texture2D>("player/player-hand-right");
-            _legLeftTexture2D = Global.Content.Load<Texture2D>("player/player-leg-left");
-            _legRightTexture2D = Global.Content.Load<Texture2D>("player/player-leg-right");
+            Vector2 position = new(_renderTarget2D.Width / 2, _renderTarget2D.Height / 2);
+            _playerBody = new(Global.Content.Load<Texture2D>("player/player-body"), position);
+            _playerHead = new(Global.Content.Load<Texture2D>("player/player-head"), position, _playerBody);
+            _playerLeftHand = new(Global.Content.Load<Texture2D>("player/player-hand-left"), position, _playerBody);
+            _playerRightHand = new(Global.Content.Load<Texture2D>("player/player-hand-right"), position, _playerBody);
+            _playerLeftLeg = new(Global.Content.Load<Texture2D>("player/player-leg-left"), position, _playerBody);
+            _playerRightLeg = new(Global.Content.Load<Texture2D>("player/player-leg-right"), position, _playerBody);
         }
 
         private bool DebugPosition()
@@ -107,7 +194,9 @@ namespace GameApplication
                 if (Math.Abs(_velocity.X) > Constants.MaxHorizontalVelocity) _velocity.X = Math.Sign(_velocity.X) * Constants.MaxHorizontalVelocity;
             }
 
-            Console.WriteLine(_velocity);
+            // Console.WriteLine(_velocity);
+
+            var elapsedSeconds = gameTime.GetElapsedSeconds();
 
             var (position, tCollision, bCollision, lCollision, rCollision) = Global.MoveBasedOnSurroundings(
                 Position,
@@ -121,7 +210,7 @@ namespace GameApplication
                 Constants.WorldVCount,
                 Constants.WorldHCount,
                 Global.World.Units,
-                gameTime.GetElapsedSeconds()
+                elapsedSeconds
             );
 
             _tCollision = tCollision;
@@ -131,22 +220,34 @@ namespace GameApplication
 
             Position = position;
 
-            Console.WriteLine($"{Position}, {_tCollision}, {_bCollision}, {_lCollision}, {_rCollision}");
+            // Console.WriteLine($"{Position}, {_tCollision}, {_bCollision}, {_lCollision}, {_rCollision}");
 
             if ((_tCollision && _velocity.Y < 0) || (_bCollision && _velocity.Y > 0))
                 _velocity.Y = 0;
 
             if ((_lCollision && _velocity.X < 0) || (_rCollision && _velocity.X > 0))
                 _velocity.X = 0;
+
+            _playerLeftHand.Update(elapsedSeconds);
+            _playerLeftLeg.Update(elapsedSeconds);
+            _playerHead.Update(elapsedSeconds);
+            _playerRightLeg.Update(elapsedSeconds);
+            _playerBody.Update(elapsedSeconds);
+            _playerRightHand.Update(elapsedSeconds);
         }
 
         public void DrawTarget(SpriteBatch spriteBatch)
         {
             var graphicsDevice = Global.GraphicsDevice;
             graphicsDevice.SetRenderTarget(_renderTarget2D);
-            graphicsDevice.Clear(Color.White);
+            graphicsDevice.Clear(Color.Transparent);
             spriteBatch.Begin();
-
+            _playerLeftHand.Draw(spriteBatch);
+            _playerLeftLeg.Draw(spriteBatch);
+            _playerHead.Draw(spriteBatch);
+            _playerRightLeg.Draw(spriteBatch);
+            _playerBody.Draw(spriteBatch);
+            _playerRightHand.Draw(spriteBatch);
             spriteBatch.End();
             graphicsDevice.SetRenderTarget(null);
         }

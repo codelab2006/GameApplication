@@ -31,9 +31,9 @@ namespace GameApplication
 
         public const int PlayerHeight = 52;
 
-        public const int PlayerRenderTarget2DWidth = 64;
+        public const int PlayerRenderTarget2DHMargin = 35;
 
-        public const int PlayerRenderTarget2DHeight = 64;
+        public const int PlayerRenderTarget2DVMargin = 20;
 
         public static readonly Vector2 GravityAcceleration = Vector2.Zero;
 
