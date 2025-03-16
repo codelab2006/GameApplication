@@ -9,7 +9,7 @@ namespace GameApplication
         private readonly Rectangle _sourceRectangle = Rectangle.Empty;
         public Vector2 Position { get; set; } = Vector2.Zero;
         public Color Color { get; set; } = Color.White;
-        public float Rotation { get; private set; } = 0;
+        public float Rotation { get; set; } = 0;
         public Vector2 Origin { get; set; } = Vector2.Zero;
         public Vector2 Scale { get; set; } = Vector2.One;
         public SpriteEffects Effects { get; set; } = SpriteEffects.None;

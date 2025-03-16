@@ -47,11 +47,18 @@ namespace GameApplication
 
         public PlayerLeftHand(Texture2D texture2D, Vector2 position, PlayerBody playerBody) : base(texture2D, position)
         {
-            Origin = new(3, 0);
+            Origin = new(4, 2);
             var bodyRectangle = playerBody.Rectangle;
             position.X = bodyRectangle.Center.X + bodyRectangle.Width / 2;
             position.Y = playerBody.Rectangle.Top + 2;
             Position = position;
+        }
+
+        public override void Update(float elapsedSeconds)
+        {
+            Rotation = MathHelper.ToRadians(-160);
+
+            base.Update(elapsedSeconds);
         }
     }
 
@@ -61,11 +68,18 @@ namespace GameApplication
 
         public PlayerRightHand(Texture2D texture2D, Vector2 position, PlayerBody playerBody) : base(texture2D, position)
         {
-            Origin = new(3, 0);
+            Origin = new(4, 2);
             var bodyRectangle = playerBody.Rectangle;
             position.X = bodyRectangle.Center.X - bodyRectangle.Width / 2;
             position.Y = playerBody.Rectangle.Top + 2;
             Position = position;
+        }
+
+        public override void Update(float elapsedSeconds)
+        {
+            Rotation = MathHelper.ToRadians(-160);
+
+            base.Update(elapsedSeconds);
         }
     }
 
