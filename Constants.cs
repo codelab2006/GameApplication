@@ -27,7 +27,7 @@ namespace GameApplication
 
         public const float FrictionCoefficient = 0.25f;
 
-        public const int PlayerWidth = 23;
+        public const int PlayerWidth = 21;
 
         public const int PlayerHeight = 52;
 

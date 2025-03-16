@@ -49,7 +49,7 @@ namespace GameApplication
         {
             Origin = new(4, 2);
             var bodyRectangle = playerBody.Rectangle;
-            position.X = bodyRectangle.Center.X + bodyRectangle.Width / 2;
+            position.X = bodyRectangle.Center.X + bodyRectangle.Width / 2 - 2;
             position.Y = playerBody.Rectangle.Top + 2;
             Position = position;
         }
@@ -70,7 +70,7 @@ namespace GameApplication
         {
             Origin = new(4, 2);
             var bodyRectangle = playerBody.Rectangle;
-            position.X = bodyRectangle.Center.X - bodyRectangle.Width / 2;
+            position.X = bodyRectangle.Center.X - bodyRectangle.Width / 2 + 2;
             position.Y = playerBody.Rectangle.Top + 2;
             Position = position;
         }
@@ -95,6 +95,13 @@ namespace GameApplication
             position.Y = bodyRectangle.Center.Y + 3;
             Position = position;
         }
+
+        public override void Update(float elapsedSeconds)
+        {
+            Rotation = MathHelper.ToRadians(35);
+
+            base.Update(elapsedSeconds);
+        }
     }
 
     internal class PlayerRightLeg : PlayerPart
@@ -108,6 +115,13 @@ namespace GameApplication
             position.X = bodyRectangle.Center.X - 2;
             position.Y = bodyRectangle.Center.Y + 3;
             Position = position;
+        }
+
+        public override void Update(float elapsedSeconds)
+        {
+            Rotation = MathHelper.ToRadians(-35);
+
+            base.Update(elapsedSeconds);
         }
     }
 
