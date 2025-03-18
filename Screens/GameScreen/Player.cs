@@ -26,7 +26,7 @@ namespace GameApplication
         {
             Origin = new(Rectangle.Width / 2, Rectangle.Height);
             var bodyRectangle = playerBody.Rectangle;
-            position.Y = bodyRectangle.Center.Y - bodyRectangle.Height / 2;
+            position.Y = bodyRectangle.Center.Y - bodyRectangle.Height / 2 + 1;
             Position = position;
         }
     }
@@ -47,16 +47,16 @@ namespace GameApplication
 
         public PlayerLeftHand(Texture2D texture2D, Vector2 position, PlayerBody playerBody) : base(texture2D, position)
         {
-            Origin = new(4, 2);
+            Origin = new(4, 0);
             var bodyRectangle = playerBody.Rectangle;
-            position.X = bodyRectangle.Center.X + bodyRectangle.Width / 2 - 2;
-            position.Y = playerBody.Rectangle.Top + 2;
+            position.X = bodyRectangle.Center.X + bodyRectangle.Width / 2 - 1;
+            position.Y = playerBody.Rectangle.Top + 1;
             Position = position;
         }
 
         public override void Update(float elapsedSeconds)
         {
-            Rotation = MathHelper.ToRadians(-160);
+            // Rotation = MathHelper.ToRadians(-35);
 
             base.Update(elapsedSeconds);
         }
@@ -68,16 +68,16 @@ namespace GameApplication
 
         public PlayerRightHand(Texture2D texture2D, Vector2 position, PlayerBody playerBody) : base(texture2D, position)
         {
-            Origin = new(4, 2);
+            Origin = new(4, 0);
             var bodyRectangle = playerBody.Rectangle;
-            position.X = bodyRectangle.Center.X - bodyRectangle.Width / 2 + 2;
-            position.Y = playerBody.Rectangle.Top + 2;
+            position.X = bodyRectangle.Center.X - bodyRectangle.Width / 2 + 1;
+            position.Y = playerBody.Rectangle.Top + 1;
             Position = position;
         }
 
         public override void Update(float elapsedSeconds)
         {
-            Rotation = MathHelper.ToRadians(-160);
+            // Rotation = MathHelper.ToRadians(35);
 
             base.Update(elapsedSeconds);
         }
@@ -92,13 +92,13 @@ namespace GameApplication
             Origin = new(Rectangle.Width / 2, 0);
             var bodyRectangle = playerBody.Rectangle;
             position.X = bodyRectangle.Center.X + 2;
-            position.Y = bodyRectangle.Center.Y + 3;
+            position.Y = bodyRectangle.Center.Y + 2;
             Position = position;
         }
 
         public override void Update(float elapsedSeconds)
         {
-            Rotation = MathHelper.ToRadians(35);
+            // Rotation = MathHelper.ToRadians(35);
 
             base.Update(elapsedSeconds);
         }
@@ -113,13 +113,13 @@ namespace GameApplication
             Origin = new(Rectangle.Width / 2, 0);
             var bodyRectangle = playerBody.Rectangle;
             position.X = bodyRectangle.Center.X - 2;
-            position.Y = bodyRectangle.Center.Y + 3;
+            position.Y = bodyRectangle.Center.Y + 2;
             Position = position;
         }
 
         public override void Update(float elapsedSeconds)
         {
-            Rotation = MathHelper.ToRadians(-35);
+            // Rotation = MathHelper.ToRadians(-35);
 
             base.Update(elapsedSeconds);
         }
@@ -257,10 +257,14 @@ namespace GameApplication
                 _velocity.X = 0;
 
             _playerLeftHand.Update(elapsedSeconds);
+
             _playerLeftLeg.Update(elapsedSeconds);
-            _playerHead.Update(elapsedSeconds);
             _playerRightLeg.Update(elapsedSeconds);
+
+            _playerHead.Update(elapsedSeconds);
+
             _playerBody.Update(elapsedSeconds);
+
             _playerRightHand.Update(elapsedSeconds);
         }
 
@@ -270,12 +274,18 @@ namespace GameApplication
             graphicsDevice.SetRenderTarget(_renderTarget2D);
             graphicsDevice.Clear(Color.Transparent);
             spriteBatch.Begin();
+
             _playerLeftHand.Draw(spriteBatch);
+
             _playerLeftLeg.Draw(spriteBatch);
-            _playerHead.Draw(spriteBatch);
             _playerRightLeg.Draw(spriteBatch);
+
+            _playerHead.Draw(spriteBatch);
+
             _playerBody.Draw(spriteBatch);
+
             _playerRightHand.Draw(spriteBatch);
+
             spriteBatch.End();
             graphicsDevice.SetRenderTarget(null);
         }
