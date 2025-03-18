@@ -15,7 +15,7 @@ namespace GameApplication
             Position = position;
         }
 
-        public virtual void Update(float elapsedSeconds) { }
+        public virtual void Update(float elapsedSeconds, Vector2 velocity, (bool tCollision, bool bCollision, bool lCollision, bool rCollision) collisions) { }
     }
 
     internal class PlayerHead : PlayerPart
@@ -43,6 +43,10 @@ namespace GameApplication
 
     internal class PlayerLeftHand : PlayerPart
     {
+        private int _direction = -1;
+        private float _rotation = 0;
+        private readonly float _maxRotation = MathHelper.ToRadians(20);
+
         public PlayerLeftHand() { }
 
         public PlayerLeftHand(Texture2D texture2D, Vector2 position, PlayerBody playerBody) : base(texture2D, position)
@@ -54,16 +58,43 @@ namespace GameApplication
             Position = position;
         }
 
-        public override void Update(float elapsedSeconds)
+        public override void Update(float elapsedSeconds, Vector2 velocity, (bool tCollision, bool bCollision, bool lCollision, bool rCollision) collisions)
         {
-            // Rotation = MathHelper.ToRadians(-35);
+            if (!collisions.bCollision)
+            {
+                _direction = -1;
+                _rotation = 0;
+                Rotation = MathHelper.ToRadians(-160);
+            }
+            else
+            {
+                if (velocity.X == 0)
+                {
+                    _direction = -1;
+                    _rotation = 0;
+                    Rotation = _rotation;
+                }
+                else
+                {
+                    if (_rotation <= -_maxRotation)
+                        _direction = 1;
+                    if (_rotation >= _maxRotation)
+                        _direction = -1;
+                    _rotation += MathHelper.ToRadians(_direction * 180 * elapsedSeconds);
+                    Rotation = _rotation;
+                }
+            }
 
-            base.Update(elapsedSeconds);
+            base.Update(elapsedSeconds, velocity, collisions);
         }
     }
 
     internal class PlayerRightHand : PlayerPart
     {
+        private int _direction = 1;
+        private float _rotation = 0;
+        private readonly float _maxRotation = MathHelper.ToRadians(20);
+
         public PlayerRightHand() { }
 
         public PlayerRightHand(Texture2D texture2D, Vector2 position, PlayerBody playerBody) : base(texture2D, position)
@@ -75,53 +106,130 @@ namespace GameApplication
             Position = position;
         }
 
-        public override void Update(float elapsedSeconds)
+        public override void Update(float elapsedSeconds, Vector2 velocity, (bool tCollision, bool bCollision, bool lCollision, bool rCollision) collisions)
         {
-            // Rotation = MathHelper.ToRadians(35);
+            if (!collisions.bCollision)
+            {
+                _direction = 1;
+                _rotation = 0;
+                Rotation = MathHelper.ToRadians(-160);
+            }
+            else
+            {
+                if (velocity.X == 0)
+                {
+                    _direction = 1;
+                    _rotation = 0;
+                    Rotation = _rotation;
+                }
+                else
+                {
+                    if (_rotation >= _maxRotation)
+                        _direction = -1;
+                    if (_rotation <= -_maxRotation)
+                        _direction = 1;
+                    _rotation += MathHelper.ToRadians(_direction * 180 * elapsedSeconds);
+                    Rotation = _rotation;
+                }
+            }
 
-            base.Update(elapsedSeconds);
+            base.Update(elapsedSeconds, velocity, collisions);
         }
     }
 
     internal class PlayerLeftLeg : PlayerPart
     {
+        private int _direction = 1;
+        private float _rotation = 0;
+        private readonly float _maxRotation = MathHelper.ToRadians(20);
+
         public PlayerLeftLeg() { }
 
         public PlayerLeftLeg(Texture2D texture2D, Vector2 position, PlayerBody playerBody) : base(texture2D, position)
         {
             Origin = new(Rectangle.Width / 2, 0);
             var bodyRectangle = playerBody.Rectangle;
-            position.X = bodyRectangle.Center.X + 2;
+            position.X = bodyRectangle.Center.X + 1;
             position.Y = bodyRectangle.Center.Y + 2;
             Position = position;
         }
 
-        public override void Update(float elapsedSeconds)
+        public override void Update(float elapsedSeconds, Vector2 velocity, (bool tCollision, bool bCollision, bool lCollision, bool rCollision) collisions)
         {
-            // Rotation = MathHelper.ToRadians(35);
+            if (!collisions.bCollision)
+            {
+                _direction = 1;
+                _rotation = 0;
+                Rotation = MathHelper.ToRadians(-15);
+            }
+            else
+            {
+                if (velocity.X == 0)
+                {
+                    _direction = 1;
+                    _rotation = 0;
+                    Rotation = _rotation;
+                }
+                else
+                {
+                    if (_rotation >= _maxRotation)
+                        _direction = -1;
+                    if (_rotation <= -_maxRotation)
+                        _direction = 1;
+                    _rotation += MathHelper.ToRadians(_direction * 180 * elapsedSeconds);
+                    Rotation = _rotation;
+                }
+            }
 
-            base.Update(elapsedSeconds);
+            base.Update(elapsedSeconds, velocity, collisions);
         }
     }
 
     internal class PlayerRightLeg : PlayerPart
     {
+        private int _direction = -1;
+        private float _rotation = 0;
+        private readonly float _maxRotation = MathHelper.ToRadians(20);
+
         public PlayerRightLeg() { }
 
         public PlayerRightLeg(Texture2D texture2D, Vector2 position, PlayerBody playerBody) : base(texture2D, position)
         {
             Origin = new(Rectangle.Width / 2, 0);
             var bodyRectangle = playerBody.Rectangle;
-            position.X = bodyRectangle.Center.X - 2;
+            position.X = bodyRectangle.Center.X - 1;
             position.Y = bodyRectangle.Center.Y + 2;
             Position = position;
         }
 
-        public override void Update(float elapsedSeconds)
+        public override void Update(float elapsedSeconds, Vector2 velocity, (bool tCollision, bool bCollision, bool lCollision, bool rCollision) collisions)
         {
-            // Rotation = MathHelper.ToRadians(-35);
+            if (!collisions.bCollision)
+            {
+                _direction = -1;
+                _rotation = 0;
+                Rotation = MathHelper.ToRadians(15);
+            }
+            else
+            {
+                if (velocity.X == 0)
+                {
+                    _direction = -1;
+                    _rotation = 0;
+                    Rotation = _rotation;
+                }
+                else
+                {
+                    if (_rotation <= -_maxRotation)
+                        _direction = 1;
+                    if (_rotation >= _maxRotation)
+                        _direction = -1;
+                    _rotation += MathHelper.ToRadians(_direction * 180 * elapsedSeconds);
+                    Rotation = _rotation;
+                }
+            }
 
-            base.Update(elapsedSeconds);
+            base.Update(elapsedSeconds, velocity, collisions);
         }
     }
 
@@ -256,16 +364,16 @@ namespace GameApplication
             if ((_lCollision && _velocity.X < 0) || (_rCollision && _velocity.X > 0))
                 _velocity.X = 0;
 
-            _playerLeftHand.Update(elapsedSeconds);
+            _playerLeftHand.Update(elapsedSeconds, _velocity, (_tCollision, _bCollision, _lCollision, _rCollision));
 
-            _playerLeftLeg.Update(elapsedSeconds);
-            _playerRightLeg.Update(elapsedSeconds);
+            _playerLeftLeg.Update(elapsedSeconds, _velocity, (_tCollision, _bCollision, _lCollision, _rCollision));
+            _playerRightLeg.Update(elapsedSeconds, _velocity, (_tCollision, _bCollision, _lCollision, _rCollision));
 
-            _playerHead.Update(elapsedSeconds);
+            _playerHead.Update(elapsedSeconds, _velocity, (_tCollision, _bCollision, _lCollision, _rCollision));
 
-            _playerBody.Update(elapsedSeconds);
+            _playerBody.Update(elapsedSeconds, _velocity, (_tCollision, _bCollision, _lCollision, _rCollision));
 
-            _playerRightHand.Update(elapsedSeconds);
+            _playerRightHand.Update(elapsedSeconds, _velocity, (_tCollision, _bCollision, _lCollision, _rCollision));
         }
 
         public void DrawTarget(SpriteBatch spriteBatch)
