@@ -45,7 +45,7 @@ namespace GameApplication
     {
         private int _direction = -1;
         private float _rotation = 0;
-        private readonly float _maxRotation = MathHelper.ToRadians(20);
+        private readonly float _maxRotation = MathHelper.ToRadians(45);
 
         public PlayerLeftHand() { }
 
@@ -80,7 +80,7 @@ namespace GameApplication
                         _direction = 1;
                     if (_rotation >= _maxRotation)
                         _direction = -1;
-                    _rotation += MathHelper.ToRadians(_direction * 180 * elapsedSeconds);
+                    _rotation += MathHelper.ToRadians(_direction * 360 * elapsedSeconds);
                     Rotation = _rotation;
                 }
             }
@@ -93,7 +93,7 @@ namespace GameApplication
     {
         private int _direction = 1;
         private float _rotation = 0;
-        private readonly float _maxRotation = MathHelper.ToRadians(20);
+        private readonly float _maxRotation = MathHelper.ToRadians(45);
 
         public PlayerRightHand() { }
 
@@ -128,7 +128,7 @@ namespace GameApplication
                         _direction = -1;
                     if (_rotation <= -_maxRotation)
                         _direction = 1;
-                    _rotation += MathHelper.ToRadians(_direction * 180 * elapsedSeconds);
+                    _rotation += MathHelper.ToRadians(_direction * 360 * elapsedSeconds);
                     Rotation = _rotation;
                 }
             }
@@ -141,16 +141,16 @@ namespace GameApplication
     {
         private int _direction = 1;
         private float _rotation = 0;
-        private readonly float _maxRotation = MathHelper.ToRadians(20);
+        private readonly float _maxRotation = MathHelper.ToRadians(45);
 
         public PlayerLeftLeg() { }
 
         public PlayerLeftLeg(Texture2D texture2D, Vector2 position, PlayerBody playerBody) : base(texture2D, position)
         {
-            Origin = new(Rectangle.Width / 2, 0);
+            Origin = new(Rectangle.Width / 2, 7);
             var bodyRectangle = playerBody.Rectangle;
             position.X = bodyRectangle.Center.X + 1;
-            position.Y = bodyRectangle.Center.Y + 2;
+            position.Y = bodyRectangle.Center.Y + 9;
             Position = position;
         }
 
@@ -176,7 +176,7 @@ namespace GameApplication
                         _direction = -1;
                     if (_rotation <= -_maxRotation)
                         _direction = 1;
-                    _rotation += MathHelper.ToRadians(_direction * 180 * elapsedSeconds);
+                    _rotation += MathHelper.ToRadians(_direction * 360 * elapsedSeconds);
                     Rotation = _rotation;
                 }
             }
@@ -189,16 +189,16 @@ namespace GameApplication
     {
         private int _direction = -1;
         private float _rotation = 0;
-        private readonly float _maxRotation = MathHelper.ToRadians(20);
+        private readonly float _maxRotation = MathHelper.ToRadians(45);
 
         public PlayerRightLeg() { }
 
         public PlayerRightLeg(Texture2D texture2D, Vector2 position, PlayerBody playerBody) : base(texture2D, position)
         {
-            Origin = new(Rectangle.Width / 2, 0);
+            Origin = new(Rectangle.Width / 2, 7);
             var bodyRectangle = playerBody.Rectangle;
             position.X = bodyRectangle.Center.X - 1;
-            position.Y = bodyRectangle.Center.Y + 2;
+            position.Y = bodyRectangle.Center.Y + 9;
             Position = position;
         }
 
@@ -224,7 +224,7 @@ namespace GameApplication
                         _direction = 1;
                     if (_rotation >= _maxRotation)
                         _direction = -1;
-                    _rotation += MathHelper.ToRadians(_direction * 180 * elapsedSeconds);
+                    _rotation += MathHelper.ToRadians(_direction * 360 * elapsedSeconds);
                     Rotation = _rotation;
                 }
             }
