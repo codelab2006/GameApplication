@@ -21,13 +21,13 @@ namespace GameApplication
 
         public const int MaxVerticalVelocity = 512;
 
-        public const float InitialHorizontalAcceleration = 8f;
+        public const float InitialHorizontalAcceleration = 4f;
 
         public const float InitialUpAcceleration = 280f;
 
         public const float FrictionCoefficient = 0.25f;
 
-        public const int PlayerWidth = 21;
+        public const int PlayerWidth = 23;
 
         public const int PlayerHeight = 52;
 

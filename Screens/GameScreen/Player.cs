@@ -45,7 +45,7 @@ namespace GameApplication
     {
         private int _direction = -1;
         private float _rotation = 0;
-        private readonly float _maxRotation = MathHelper.ToRadians(45);
+        private readonly float _maxRotation = MathHelper.ToRadians(20);
 
         public PlayerLeftHand() { }
 
@@ -80,7 +80,7 @@ namespace GameApplication
                         _direction = 1;
                     if (_rotation >= _maxRotation)
                         _direction = -1;
-                    _rotation += MathHelper.ToRadians(_direction * 360 * elapsedSeconds);
+                    _rotation += MathHelper.ToRadians(_direction * 180 * elapsedSeconds);
                     Rotation = _rotation;
                 }
             }
@@ -93,7 +93,7 @@ namespace GameApplication
     {
         private int _direction = 1;
         private float _rotation = 0;
-        private readonly float _maxRotation = MathHelper.ToRadians(45);
+        private readonly float _maxRotation = MathHelper.ToRadians(20);
 
         public PlayerRightHand() { }
 
@@ -128,7 +128,7 @@ namespace GameApplication
                         _direction = -1;
                     if (_rotation <= -_maxRotation)
                         _direction = 1;
-                    _rotation += MathHelper.ToRadians(_direction * 360 * elapsedSeconds);
+                    _rotation += MathHelper.ToRadians(_direction * 180 * elapsedSeconds);
                     Rotation = _rotation;
                 }
             }
@@ -141,7 +141,7 @@ namespace GameApplication
     {
         private int _direction = 1;
         private float _rotation = 0;
-        private readonly float _maxRotation = MathHelper.ToRadians(45);
+        private readonly float _maxRotation = MathHelper.ToRadians(20);
 
         public PlayerLeftLeg() { }
 
@@ -176,7 +176,7 @@ namespace GameApplication
                         _direction = -1;
                     if (_rotation <= -_maxRotation)
                         _direction = 1;
-                    _rotation += MathHelper.ToRadians(_direction * 360 * elapsedSeconds);
+                    _rotation += MathHelper.ToRadians(_direction * 180 * elapsedSeconds);
                     Rotation = _rotation;
                 }
             }
@@ -189,7 +189,7 @@ namespace GameApplication
     {
         private int _direction = -1;
         private float _rotation = 0;
-        private readonly float _maxRotation = MathHelper.ToRadians(45);
+        private readonly float _maxRotation = MathHelper.ToRadians(20);
 
         public PlayerRightLeg() { }
 
@@ -224,7 +224,7 @@ namespace GameApplication
                         _direction = 1;
                     if (_rotation >= _maxRotation)
                         _direction = -1;
-                    _rotation += MathHelper.ToRadians(_direction * 360 * elapsedSeconds);
+                    _rotation += MathHelper.ToRadians(_direction * 180 * elapsedSeconds);
                     Rotation = _rotation;
                 }
             }
@@ -251,6 +251,8 @@ namespace GameApplication
         private bool _bCollision = false;
         private bool _lCollision = false;
         private bool _rCollision = false;
+
+        private bool _isFlipped = false;
 
         private bool _debugKeyDown = false;
 
@@ -331,6 +333,11 @@ namespace GameApplication
             }
 
             // Console.WriteLine(_velocity);
+
+            if (_velocity.X > 0) _isFlipped = false;
+            if (_velocity.X < 0) _isFlipped = true;
+
+            Effects = _isFlipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
             var elapsedSeconds = gameTime.GetElapsedSeconds();
 
