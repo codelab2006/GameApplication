@@ -149,7 +149,7 @@ namespace GameApplication
         {
             Origin = new(Rectangle.Width / 2, 7);
             var bodyRectangle = playerBody.Rectangle;
-            position.X = bodyRectangle.Center.X + 1;
+            position.X = bodyRectangle.Center.X + 2;
             position.Y = bodyRectangle.Center.Y + 9;
             Position = position;
         }
@@ -197,7 +197,7 @@ namespace GameApplication
         {
             Origin = new(Rectangle.Width / 2, 7);
             var bodyRectangle = playerBody.Rectangle;
-            position.X = bodyRectangle.Center.X - 1;
+            position.X = bodyRectangle.Center.X - 2;
             position.Y = bodyRectangle.Center.Y + 9;
             Position = position;
         }
