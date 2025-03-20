@@ -116,7 +116,7 @@
 /processorParam:TextureFormat=Color
 /build:player/player-leg-right.png
 
-#begin world_units.png
+#begin world-units.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -126,7 +126,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:world_units.png
+/build:world-units.png
 
 #begin xp.png
 /importer:TextureImporter

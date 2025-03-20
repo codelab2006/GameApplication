@@ -27,7 +27,7 @@ namespace GameApplication
 
         public void LoadContent()
         {
-            _texture2D = Global.Content.Load<Texture2D>("world_units");
+            _texture2D = Global.Content.Load<Texture2D>("world-units");
         }
 
         public void Draw(SpriteBatch spriteBatch, Vector2 position)
