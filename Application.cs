@@ -30,7 +30,7 @@ namespace GameApplication
         {
             Global.Game = this;
             Global.Window = Window;
-            Global.GraphicsDevice = GraphicsDevice;
+            Global.GameGraphicsDevice = new(GraphicsDevice);
             Global.Content = Content;
             Global.ViewportAdapter = new ViewportAdapter(Window, GraphicsDevice, Constants.VirtualWidth, Constants.VirtualHeight);
             Global.Camera = new Camera(Global.ViewportAdapter)

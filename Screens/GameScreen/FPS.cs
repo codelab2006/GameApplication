@@ -12,7 +12,7 @@ namespace GameApplication
         private int _frameCounter;
         private TimeSpan _elapsedTime = TimeSpan.Zero;
 
-        private readonly SpriteBatch _spriteBatch = new(Global.GraphicsDevice);
+        private readonly SpriteBatch _spriteBatch = Global.GameGraphicsDevice.CreateSpriteBatch();
 
         public void LoadContent()
         {

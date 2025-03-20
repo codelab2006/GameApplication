@@ -58,7 +58,7 @@ namespace GameApplication
             {
                 _player.DrawTarget(_spriteBatch);
 
-                Global.GraphicsDevice.Clear(Color.CornflowerBlue);
+                Global.GameGraphicsDevice.Clear(Color.CornflowerBlue);
 
                 _spriteBatch.Begin(transformMatrix: Global.Camera.GetViewMatrix());
 

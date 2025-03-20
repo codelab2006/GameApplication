@@ -258,7 +258,7 @@ namespace GameApplication
 
         public Player() : base(null, new(0, 0, Constants.PlayerWidth, Constants.PlayerHeight))
         {
-            _renderTarget2D = new(Global.GraphicsDevice,
+            _renderTarget2D = Global.GameGraphicsDevice.CreateRenderTarget2D(
                 Constants.PlayerWidth + Constants.PlayerRenderTarget2DHMargin * 2,
                 Constants.PlayerHeight + Constants.PlayerRenderTarget2DVMargin * 2
             );
@@ -385,7 +385,7 @@ namespace GameApplication
 
         public void DrawTarget(SpriteBatch spriteBatch)
         {
-            var graphicsDevice = Global.GraphicsDevice;
+            var graphicsDevice = Global.GameGraphicsDevice;
             graphicsDevice.SetRenderTarget(_renderTarget2D);
             graphicsDevice.Clear(Color.Transparent);
             spriteBatch.Begin();

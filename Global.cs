@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
 
 #pragma warning disable CS8618
 
@@ -13,7 +12,7 @@ namespace GameApplication
     {
         public static Game Game { set; get; }
         public static GameWindow Window { set; get; }
-        public static GraphicsDevice GraphicsDevice { set; get; }
+        public static GameGraphicsDevice GameGraphicsDevice { set; get; }
         public static ContentManager Content { set; get; }
         public static ViewportAdapter ViewportAdapter { set; get; }
         public static Camera Camera { set; get; }
