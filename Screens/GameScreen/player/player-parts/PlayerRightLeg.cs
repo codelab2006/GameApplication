@@ -26,7 +26,7 @@ namespace GameApplication
             {
                 _direction = -1;
                 _rotation = 0;
-                Rotation = MathHelper.ToRadians(35);
+                Rotation = MathHelper.ToRadians(25);
             }
             else
             {
