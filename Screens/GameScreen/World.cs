@@ -21,6 +21,12 @@ namespace GameApplication
                     Units[i, j] = new Unit(UnitFG.STONE);
                 }
             }
+
+            for (int i = Units.GetLength(0) / 2; i < Units.GetLength(0) / 2 + 5; i++)
+            {
+                Units[i, Units.GetLength(1) / 2] = new Unit(UnitFG.STONE);
+            }
+
             Width = Units.GetLength(1) * Constants.UnitWidth;
             Height = Units.GetLength(0) * Constants.UnitHeight;
         }
@@ -53,7 +59,7 @@ namespace GameApplication
                             ((i >= highlightRange.Value.vTFrom && i < highlightRange.Value.vBTo && ((j >= highlightRange.Value.hLFrom && j < highlightRange.Value.hLTo) || (j >= highlightRange.Value.hRFrom && j < highlightRange.Value.hRTo))) ||
                             (j >= highlightRange.Value.hLFrom && j < highlightRange.Value.hRTo && ((i >= highlightRange.Value.vTFrom && i < highlightRange.Value.vTTo) || (i >= highlightRange.Value.vBFrom && i < highlightRange.Value.vBTo))))
                         )
-                            color = Color.Black;
+                            color = Color.Blue;
 
                         spriteBatch.Draw(_texture2D, new Vector2(j * Constants.UnitWidth, i * Constants.UnitHeight), new Rectangle((int)unit.FG * Constants.UnitWidth, 0, Constants.UnitWidth, Constants.UnitHeight), color, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
                     }

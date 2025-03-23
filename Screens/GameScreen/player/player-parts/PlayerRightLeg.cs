@@ -3,21 +3,18 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace GameApplication
 {
-    public class PlayerRightLeg : PlayerPart
+    public class PlayerRightLeg : PlayerLeg
     {
         private int _direction = -1;
         private float _rotation = 0;
-        private readonly float _maxRotation = MathHelper.ToRadians(20);
-
         public PlayerRightLeg() { }
 
-        public PlayerRightLeg(Texture2D texture2D, Vector2 position, PlayerBody playerBody) : base(texture2D, position)
+        public PlayerRightLeg(Texture2D texture2D, Vector2 position, PlayerBody playerBody) : base(texture2D, position, playerBody) { }
+
+        protected override float GetPositionX(PlayerBody playerBody)
         {
-            Origin = new(Rectangle.Width / 2, 7);
             var bodyRectangle = playerBody.Rectangle;
-            position.X = bodyRectangle.Center.X - 2;
-            position.Y = bodyRectangle.Center.Y + 9;
-            Position = position;
+            return bodyRectangle.Center.X - 2;
         }
 
         public override void Update(float elapsedSeconds, Vector2 velocity, (bool tCollision, bool bCollision, bool lCollision, bool rCollision) collisions)

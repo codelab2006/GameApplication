@@ -9,7 +9,7 @@ namespace GameApplication
 
         public PlayerBody(Texture2D texture2D, Vector2 position) : base(texture2D, position)
         {
-            position.Y += 2;
+            position.Y += 1;
             Position = position;
         }
     }

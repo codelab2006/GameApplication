@@ -123,88 +123,87 @@ namespace GameApplication
                 float elapsedSeconds)
         {
             bool tCollision = false, bCollision = false, lCollision = false, rCollision = false;
-            if (velocity != Vector2.Zero)
+            if (velocity == Vector2.Zero || elapsedSeconds == 0) return (currentPosition, tCollision, bCollision, lCollision, rCollision);
+
+            var frameVelocity = velocity * elapsedSeconds;
+            if (frameVelocity == Vector2.Zero || float.IsNaN(frameVelocity.X) || float.IsNaN(frameVelocity.Y)) return (currentPosition, tCollision, bCollision, lCollision, rCollision);
+
+            var normalizedV = Vector2.Normalize(frameVelocity);
+            if (normalizedV == Vector2.Zero || float.IsNaN(normalizedV.X) || float.IsNaN(normalizedV.Y)) return (currentPosition, tCollision, bCollision, lCollision, rCollision);
+
+            var newPosition = Move(currentPosition, frameVelocity);
+            Vector2 stepVelocity = normalizedV * collisionStep * elapsedSeconds;
+            if (stepVelocity.LengthSquared() > frameVelocity.LengthSquared()) stepVelocity = frameVelocity;
+
+            float? newPositionY = null, newPositionX = null;
+            var rectangle = getRectangle(currentPosition);
+            int rectWidth = rectangle.Width, rectHeight = rectangle.Height;
+            var (vIndexes, hIndexes) = GetTargetVHPeripheralUnitsIndexes(rectangle.Center.ToVector2(),
+                rectWidth,
+                rectHeight,
+                margin,
+                unitHeight,
+                unitWidth,
+                totalVCount,
+                totalHCount
+            );
+            while (stepVelocity.LengthSquared() <= frameVelocity.LengthSquared())
             {
-                var frameVelocity = velocity * elapsedSeconds;
-                var newPosition = Move(currentPosition, frameVelocity);
-                var normalizedV = Vector2.Normalize(frameVelocity);
-                Vector2 stepVelocity = normalizedV * collisionStep * elapsedSeconds;
-                if (stepVelocity.LengthSquared() > frameVelocity.LengthSquared()) stepVelocity = frameVelocity;
+                var stepCollisionRectangle = getCollisionRectangle(Move(currentPosition, stepVelocity));
 
-                float? newPositionY = null, newPositionX = null;
-                var rectangle = getRectangle(currentPosition);
-                int rectWidth = rectangle.Width, rectHeight = rectangle.Height;
-                var (vIndexes, hIndexes) = GetTargetVHPeripheralUnitsIndexes(rectangle.Center.ToVector2(),
-                    rectWidth,
-                    rectHeight,
-                    margin,
-                    unitHeight,
-                    unitWidth,
-                    totalVCount,
-                    totalHCount
-                );
-                while (stepVelocity.LengthSquared() <= frameVelocity.LengthSquared())
+                if (!bCollision && !tCollision)
                 {
-                    var stepCollisionRectangle = getCollisionRectangle(Move(currentPosition, stepVelocity));
-
-                    if (!bCollision && !tCollision)
+                    foreach (var (vi, hi) in vIndexes)
                     {
-                        foreach (var (vi, hi) in vIndexes)
+                        IUnit? unit = units[vi, hi];
+                        if (unit == null || !unit.IsStatic) continue;
+
+                        var uRectangle = new CollisionRectangle(hi * unitWidth, vi * unitHeight, unitWidth, unitHeight);
+                        if (!uRectangle.Intersects(stepCollisionRectangle)) continue;
+                        if (stepVelocity.Y > 0 && uRectangle.Center.Y > stepCollisionRectangle.Center.Y)
                         {
-                            IUnit? unit = units[vi, hi];
-                            if (unit == null || !unit.IsStatic) continue;
+                            newPositionY = newPositionY.HasValue ? Math.Min(newPositionY.Value, uRectangle.Top - (float)rectHeight / 2) : uRectangle.Top - (float)rectHeight / 2;
+                            bCollision = true;
+                        }
 
-                            var uRectangle = new CollisionRectangle(hi * unitWidth, vi * unitHeight, unitWidth, unitHeight);
-                            if (!uRectangle.Intersects(stepCollisionRectangle)) continue;
-                            if (stepVelocity.Y > 0 && uRectangle.Center.Y > stepCollisionRectangle.Center.Y)
-                            {
-                                newPositionY = newPositionY.HasValue ? Math.Min(newPositionY.Value, uRectangle.Top - rectHeight / 2) : uRectangle.Top - rectHeight / 2;
-                                bCollision = true;
-                            }
-
-                            if (stepVelocity.Y < 0 && uRectangle.Center.Y < stepCollisionRectangle.Center.Y)
-                            {
-                                newPositionY = newPositionY.HasValue ? Math.Max(newPositionY.Value, uRectangle.Bottom + rectHeight / 2) : uRectangle.Bottom + rectHeight / 2;
-                                tCollision = true;
-                            }
+                        if (stepVelocity.Y < 0 && uRectangle.Center.Y < stepCollisionRectangle.Center.Y)
+                        {
+                            newPositionY = newPositionY.HasValue ? Math.Max(newPositionY.Value, uRectangle.Bottom + (float)rectHeight / 2) : uRectangle.Bottom + (float)rectHeight / 2;
+                            tCollision = true;
                         }
                     }
-
-                    if (!rCollision && !lCollision)
-                    {
-                        foreach (var (vi, hi) in hIndexes)
-                        {
-                            IUnit? unit = units[vi, hi];
-                            if (unit == null || !unit.IsStatic) continue;
-
-                            var uRectangle = new CollisionRectangle(hi * unitWidth, vi * unitHeight, unitWidth, unitHeight);
-                            if (!uRectangle.Intersects(stepCollisionRectangle)) continue;
-                            if (stepVelocity.X > 0 && uRectangle.Center.X > stepCollisionRectangle.Center.X)
-                            {
-                                newPositionX = newPositionX.HasValue ? Math.Min(newPositionX.Value, uRectangle.Left - rectWidth / 2) : uRectangle.Left - rectWidth / 2;
-                                rCollision = true;
-                            }
-                            if (stepVelocity.X < 0 && uRectangle.Center.X < stepCollisionRectangle.Center.X)
-                            {
-                                newPositionX = newPositionX.HasValue ? Math.Max(newPositionX.Value, uRectangle.Right + rectWidth / 2) : uRectangle.Right + rectWidth / 2;
-                                lCollision = true;
-                            }
-                        }
-                    }
-                    if ((newPositionY.HasValue && newPositionX.HasValue) || stepVelocity.LengthSquared() == frameVelocity.LengthSquared()) break;
-                    stepVelocity += normalizedV * collisionStep * elapsedSeconds;
-                    if (stepVelocity.LengthSquared() > frameVelocity.LengthSquared()) stepVelocity = frameVelocity;
                 }
 
-                if (newPositionY != null) newPosition.Y = (float)newPositionY;
-                if (newPositionX != null) newPosition.X = (float)newPositionX;
+                if (!rCollision && !lCollision)
+                {
+                    foreach (var (vi, hi) in hIndexes)
+                    {
+                        IUnit? unit = units[vi, hi];
+                        if (unit == null || !unit.IsStatic) continue;
 
-                return (newPosition, tCollision, bCollision, lCollision, rCollision);
+                        var uRectangle = new CollisionRectangle(hi * unitWidth, vi * unitHeight, unitWidth, unitHeight);
+                        if (!uRectangle.Intersects(stepCollisionRectangle)) continue;
+                        if (stepVelocity.X > 0 && uRectangle.Center.X > stepCollisionRectangle.Center.X)
+                        {
+                            newPositionX = newPositionX.HasValue ? Math.Min(newPositionX.Value, uRectangle.Left - rectWidth / 2) : uRectangle.Left - rectWidth / 2;
+                            rCollision = true;
+                        }
+                        if (stepVelocity.X < 0 && uRectangle.Center.X < stepCollisionRectangle.Center.X)
+                        {
+                            newPositionX = newPositionX.HasValue ? Math.Max(newPositionX.Value, uRectangle.Right + rectWidth / 2) : uRectangle.Right + rectWidth / 2;
+                            lCollision = true;
+                        }
+                    }
+                }
+                if ((newPositionY.HasValue && newPositionX.HasValue) || stepVelocity.LengthSquared() == frameVelocity.LengthSquared()) break;
+                stepVelocity += normalizedV * collisionStep * elapsedSeconds;
+                if (stepVelocity.LengthSquared() > frameVelocity.LengthSquared()) stepVelocity = frameVelocity;
             }
-            else
-            {
-                return (currentPosition, tCollision, bCollision, lCollision, rCollision);
-            }
+
+            if (newPositionY != null) newPosition.Y = (float)newPositionY;
+            if (newPositionX != null) newPosition.X = (float)newPositionX;
+
+            return (newPosition, tCollision, bCollision, lCollision, rCollision);
         }
     }
 }

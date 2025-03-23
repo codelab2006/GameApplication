@@ -16,10 +16,10 @@ namespace GameApplication
 
         public readonly bool Intersects(CollisionRectangle value)
         {
-            return value.Left < Right &&
-                   Left < value.Right &&
-                   value.Top < Bottom &&
-                   Top < value.Bottom;
+            return value.Left <= Right &&
+                   Left <= value.Right &&
+                   value.Top <= Bottom &&
+                   Top <= value.Bottom;
         }
     }
 }
