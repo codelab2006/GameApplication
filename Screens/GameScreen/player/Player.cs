@@ -86,15 +86,15 @@ namespace GameApplication
                 //     _velocity += direction * Constants.InitialUpAcceleration;
                 // }
 
-                if (Math.Abs(_velocity.Y) > Constants.MaxVerticalVelocity) _velocity.Y = Math.Sign(_velocity.Y) * Constants.MaxVerticalVelocity;
+                if (MathF.Abs(_velocity.Y) > Constants.MaxVerticalVelocity) _velocity.Y = MathF.Sign(_velocity.Y) * Constants.MaxVerticalVelocity;
             }
 
             if (_bCollision &&
                 ((state.IsKeyUp(Keys.A) && state.IsKeyUp(Keys.D)) || (state.IsKeyDown(Keys.A) && state.IsKeyDown(Keys.D)) ||
                 (_velocity.X > 0 && state.IsKeyDown(Keys.A)) || (_velocity.X < 0 && state.IsKeyDown(Keys.D))))
             {
-                if (Math.Abs(_velocity.X) > 0) _velocity.X *= 1 - Constants.FrictionCoefficient;
-                if (Math.Abs(_velocity.X) < 1) _velocity.X = 0;
+                if (MathF.Abs(_velocity.X) > 0) _velocity.X *= 1 - Constants.FrictionCoefficient;
+                if (MathF.Abs(_velocity.X) < 1) _velocity.X = 0;
             }
             else
             {
@@ -102,7 +102,7 @@ namespace GameApplication
                 if (state.IsKeyDown(Keys.A)) direction -= Vector2.UnitX;
                 if (state.IsKeyDown(Keys.D)) direction += Vector2.UnitX;
                 _velocity += direction * Constants.InitialHorizontalAcceleration;
-                if (Math.Abs(_velocity.X) > Constants.MaxHorizontalVelocity) _velocity.X = Math.Sign(_velocity.X) * Constants.MaxHorizontalVelocity;
+                if (MathF.Abs(_velocity.X) > Constants.MaxHorizontalVelocity) _velocity.X = MathF.Sign(_velocity.X) * Constants.MaxHorizontalVelocity;
             }
 
             // Console.WriteLine(_velocity);
@@ -118,8 +118,8 @@ namespace GameApplication
                 Position,
                 _velocity,
                 Constants.CollisionStep,
-                GetRectangleByPosition,
-                GetCollisionRectangleByPosition,
+                GetRectangleFByPosition,
+                GetRectangleFByPosition,
                 Constants.CollisionMargin,
                 Constants.UnitHeight,
                 Constants.UnitWidth,
@@ -136,7 +136,7 @@ namespace GameApplication
 
             Position = position;
 
-            // Console.WriteLine($"{Position}, {_tCollision}, {_bCollision}, {_lCollision}, {_rCollision}");
+            Console.WriteLine($"{Position}, {_tCollision}, {_bCollision}, {_lCollision}, {_rCollision}");
 
             if ((_tCollision && _velocity.Y < 0) || (_bCollision && _velocity.Y > 0))
                 _velocity.Y = 0;
@@ -160,21 +160,21 @@ namespace GameApplication
         {
             var graphicsDevice = Global.GameGraphicsDevice;
             graphicsDevice.SetRenderTarget(_renderTarget2D);
-            graphicsDevice.Clear(Color.Transparent);
-            spriteBatch.Begin();
+            graphicsDevice.Clear(Color.Yellow);
+            // spriteBatch.Begin();
 
-            _playerLeftHand.Draw(spriteBatch);
+            // _playerLeftHand.Draw(spriteBatch);
 
-            _playerLeftLeg.Draw(spriteBatch);
-            _playerRightLeg.Draw(spriteBatch);
+            // _playerLeftLeg.Draw(spriteBatch);
+            // _playerRightLeg.Draw(spriteBatch);
 
-            _playerHead.Draw(spriteBatch);
+            // _playerHead.Draw(spriteBatch);
 
-            _playerBody.Draw(spriteBatch);
+            // _playerBody.Draw(spriteBatch);
 
-            _playerRightHand.Draw(spriteBatch);
+            // _playerRightHand.Draw(spriteBatch);
 
-            spriteBatch.End();
+            // spriteBatch.End();
             graphicsDevice.SetRenderTarget(null);
         }
 

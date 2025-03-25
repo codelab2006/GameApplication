@@ -15,6 +15,7 @@ namespace GameApplication
         public SpriteEffects Effects { get; set; } = SpriteEffects.None;
         public float LayerDepth { get; set; } = 0;
         public Rectangle Rectangle => GetRectangleByPosition(Position);
+        public RectangleF RectangleF => GetRectangleFByPosition(Position);
 
         public Sprite() : this(null) { }
 
@@ -53,9 +54,9 @@ namespace GameApplication
             );
         }
 
-        public CollisionRectangle GetCollisionRectangleByPosition(Vector2 position)
+        public RectangleF GetRectangleFByPosition(Vector2 position)
         {
-            return new CollisionRectangle(
+            return new RectangleF(
                 position.X - Origin.X * Scale.X,
                 position.Y - Origin.Y * Scale.Y,
                 _sourceRectangle.Width * Scale.X,
