@@ -119,7 +119,6 @@ namespace GameApplication
                 _velocity,
                 Constants.CollisionStep,
                 GetRectangleFByPosition,
-                GetRectangleFByPosition,
                 Constants.CollisionMargin,
                 Constants.UnitHeight,
                 Constants.UnitWidth,
@@ -161,20 +160,20 @@ namespace GameApplication
             var graphicsDevice = Global.GameGraphicsDevice;
             graphicsDevice.SetRenderTarget(_renderTarget2D);
             graphicsDevice.Clear(Color.Yellow);
-            // spriteBatch.Begin();
+            spriteBatch.Begin();
 
-            // _playerLeftHand.Draw(spriteBatch);
+            _playerLeftHand.Draw(spriteBatch);
 
-            // _playerLeftLeg.Draw(spriteBatch);
-            // _playerRightLeg.Draw(spriteBatch);
+            _playerLeftLeg.Draw(spriteBatch);
+            _playerRightLeg.Draw(spriteBatch);
 
-            // _playerHead.Draw(spriteBatch);
+            _playerHead.Draw(spriteBatch);
 
-            // _playerBody.Draw(spriteBatch);
+            _playerBody.Draw(spriteBatch);
 
-            // _playerRightHand.Draw(spriteBatch);
+            _playerRightHand.Draw(spriteBatch);
 
-            // spriteBatch.End();
+            spriteBatch.End();
             graphicsDevice.SetRenderTarget(null);
         }
 

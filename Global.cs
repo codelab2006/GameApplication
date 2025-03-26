@@ -24,7 +24,6 @@ namespace GameApplication
                 Vector2 velocity,
                 int collisionStep,
                 Func<Vector2, RectangleF> getRectangle,
-                Func<Vector2, RectangleF> getCollisionRectangle,
                 int margin, int unitHeight, int unitWidth, int totalVCount, int totalHCount,
                 IUnit[,] units,
                 float elapsedSeconds)
@@ -56,7 +55,7 @@ namespace GameApplication
             );
             while (stepVelocity.LengthSquared() <= frameVelocity.LengthSquared())
             {
-                var stepVCollisionRectangle = getCollisionRectangle(Move(currentPosition, new(0, stepVelocity.Y)));
+                var stepVCollisionRectangle = getRectangle(Move(currentPosition, new(0, stepVelocity.Y + (stepVelocity.Y < 0 ? MathF.Sign(stepVelocity.Y) : 0))));
                 if (!bCollision && !tCollision)
                 {
                     foreach (var (vi, hi) in vIndexes)
@@ -79,7 +78,7 @@ namespace GameApplication
                         }
                     }
                 }
-                var stepHCollisionRectangle = getCollisionRectangle(Move(currentPosition, new(stepVelocity.X, 0)));
+                var stepHCollisionRectangle = getRectangle(Move(currentPosition, new(stepVelocity.X + (stepVelocity.X < 0 ? MathF.Sign(stepVelocity.X) : 0), 0)));
                 if (!rCollision && !lCollision)
                 {
                     foreach (var (vi, hi) in hIndexes)
@@ -106,8 +105,20 @@ namespace GameApplication
                 if (stepVelocity.LengthSquared() > frameVelocity.LengthSquared()) stepVelocity = frameVelocity;
             }
 
-            if (newPositionY != null) newPosition.Y = (float)newPositionY;
-            if (newPositionX != null) newPosition.X = (float)newPositionX;
+            if (newPositionY != null)
+            {
+                if (tCollision)
+                    newPosition.Y = MathF.Ceiling((float)newPositionY);
+                if (bCollision)
+                    newPosition.Y = MathF.Floor((float)newPositionY);
+            }
+            if (newPositionX != null)
+            {
+                if (lCollision)
+                    newPosition.X = MathF.Ceiling((float)newPositionX);
+                if (rCollision)
+                    newPosition.X = MathF.Floor((float)newPositionX);
+            }
 
             return (newPosition, tCollision, bCollision, lCollision, rCollision);
         }
