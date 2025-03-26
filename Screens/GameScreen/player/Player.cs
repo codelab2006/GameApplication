@@ -75,16 +75,16 @@ namespace GameApplication
 
             _velocity = Global.UpdateVelocityByGravity(_velocity, Constants.GravityAcceleration, Constants.MaxVerticalVelocity);
 
-            if (state.IsKeyDown(Keys.Space))
+            if (state.IsKeyDown(Keys.Space) || state.IsKeyDown(Keys.W))
             {
                 var direction = Vector2.Zero - Vector2.UnitY;
                 if (_bCollision)
                     _velocity += direction * Constants.InitialUpAcceleration;
 
-                // if (true)
-                // {
-                //     _velocity += direction * Constants.InitialUpAcceleration;
-                // }
+                if (state.IsKeyDown(Keys.W))
+                {
+                    _velocity += direction * Constants.ContinueUpAcceleration;
+                }
 
                 if (MathF.Abs(_velocity.Y) > Constants.MaxVerticalVelocity) _velocity.Y = MathF.Sign(_velocity.Y) * Constants.MaxVerticalVelocity;
             }

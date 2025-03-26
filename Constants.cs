@@ -25,6 +25,8 @@ namespace GameApplication
 
         public const float InitialUpAcceleration = 275f;
 
+        public const float ContinueUpAcceleration = 16f;
+
         public const float FrictionCoefficient = 0.25f;
 
         public const int PlayerWidth = 16;
