@@ -10,7 +10,7 @@ namespace GameApplication
         public const int UnitWidth = 16;
         public const int UnitHeight = 16;
 
-        public const int WorldHCount = 20;
+        public const int WorldHCount = 500;
         public const int WorldVCount = 20;
 
         public const int CollisionMargin = 16;
@@ -23,7 +23,7 @@ namespace GameApplication
 
         public const float InitialHorizontalAcceleration = 8f;
 
-        public const float InitialUpAcceleration = 275f;
+        public const float InitialUpAcceleration = 282f;
 
         public const float ContinueUpAcceleration = 12f;
 
@@ -33,9 +33,9 @@ namespace GameApplication
 
         public const int PlayerHeight = 53;
 
-        public const int PlayerRenderTarget2DHMargin = 0;
+        public const int PlayerRenderTarget2DHMargin = 35;
 
-        public const int PlayerRenderTarget2DVMargin = 0;
+        public const int PlayerRenderTarget2DVMargin = 20;
 
         public static readonly Vector2 GravityAcceleration = Vector2.Zero;
 

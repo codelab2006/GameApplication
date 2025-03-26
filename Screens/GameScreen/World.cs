@@ -46,7 +46,6 @@ namespace GameApplication
             if (_texture2D == null) return;
 
             var (vFrom, vTo, hFrom, hTo) = Global.GetTargetUnitsRange(position, Constants.VirtualWidth, Constants.VirtualHeight, Constants.UnitHeight, Constants.UnitWidth, Constants.WorldVCount, Constants.WorldHCount);
-
             for (int i = vFrom; i < vTo; i++)
             {
                 for (int j = hFrom; j < hTo; j++)

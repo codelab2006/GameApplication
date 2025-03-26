@@ -55,7 +55,7 @@ namespace GameApplication
             );
             while (stepVelocity.LengthSquared() <= frameVelocity.LengthSquared())
             {
-                var stepVCollisionRectangle = getRectangle(Move(currentPosition, new(0, stepVelocity.Y + (stepVelocity.Y < 0 ? MathF.Sign(stepVelocity.Y) : 0))));
+                var stepVCollisionRectangle = getRectangle(Move(currentPosition, new(0, stepVelocity.Y + (stepVelocity.Y < 0 ? -1 : 0))));
                 if (!bCollision && !tCollision)
                 {
                     foreach (var (vi, hi) in vIndexes)
@@ -78,7 +78,7 @@ namespace GameApplication
                         }
                     }
                 }
-                var stepHCollisionRectangle = getRectangle(Move(currentPosition, new(stepVelocity.X + (stepVelocity.X < 0 ? MathF.Sign(stepVelocity.X) : 0), 0)));
+                var stepHCollisionRectangle = getRectangle(Move(currentPosition, new(stepVelocity.X + (stepVelocity.X < 0 ? -1 : 0), 0)));
                 if (!rCollision && !lCollision)
                 {
                     foreach (var (vi, hi) in hIndexes)
@@ -105,20 +105,8 @@ namespace GameApplication
                 if (stepVelocity.LengthSquared() > frameVelocity.LengthSquared()) stepVelocity = frameVelocity;
             }
 
-            if (newPositionY != null)
-            {
-                if (tCollision)
-                    newPosition.Y = MathF.Ceiling((float)newPositionY);
-                if (bCollision)
-                    newPosition.Y = MathF.Floor((float)newPositionY);
-            }
-            if (newPositionX != null)
-            {
-                if (lCollision)
-                    newPosition.X = MathF.Ceiling((float)newPositionX);
-                if (rCollision)
-                    newPosition.X = MathF.Floor((float)newPositionX);
-            }
+            if (newPositionY != null) newPosition.Y = MathF.Floor((float)newPositionY);
+            if (newPositionX != null) newPosition.X = MathF.Floor((float)newPositionX);
 
             return (newPosition, tCollision, bCollision, lCollision, rCollision);
         }

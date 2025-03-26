@@ -159,7 +159,7 @@ namespace GameApplication
         {
             var graphicsDevice = Global.GameGraphicsDevice;
             graphicsDevice.SetRenderTarget(_renderTarget2D);
-            graphicsDevice.Clear(Color.Yellow);
+            graphicsDevice.Clear(Color.Transparent);
             spriteBatch.Begin();
 
             _playerLeftHand.Draw(spriteBatch);

@@ -63,7 +63,7 @@ namespace GameApplication
                 _spriteBatch.Begin(transformMatrix: Global.Camera.GetViewMatrix());
 
                 var rectangleF = _player.RectangleF;
-                _world.Draw(_spriteBatch, _position, Global.GetTargetPeripheralUnitsRange(_position, rectangleF.Width, rectangleF.Height, Constants.CollisionMargin, Constants.UnitHeight, Constants.UnitWidth, Constants.WorldVCount, Constants.WorldHCount));
+                _world.Draw(_spriteBatch, _position, Global.GetTargetPeripheralUnitsRange(_player.RectangleF.Center, rectangleF.Width, rectangleF.Height, Constants.CollisionMargin, Constants.UnitHeight, Constants.UnitWidth, Constants.WorldVCount, Constants.WorldHCount));
 
                 // _world.Draw(_spriteBatch, _position);
 
