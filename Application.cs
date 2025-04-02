@@ -43,6 +43,7 @@ namespace GameApplication
                 { nameof(GameScreen), new GameScreen(this) },
                 { nameof(OptionsScreen), new OptionsScreen(this) },
                 { nameof(InformationScreen), new InformationScreen(this) },
+                { nameof(LabScreen), new LabScreen(this) },
             });
 
             base.Initialize();
@@ -77,6 +78,8 @@ namespace GameApplication
                 Global.ScreenManager.GoTo(nameof(OptionsScreen));
             if (Keyboard.GetState().IsKeyDown(Keys.D5))
                 Global.ScreenManager.GoTo(nameof(InformationScreen));
+            if (Keyboard.GetState().IsKeyDown(Keys.D0))
+                Global.ScreenManager.GoTo(nameof(LabScreen));
 
             Global.ScreenManager.GoTo(nameof(GameScreen));
 

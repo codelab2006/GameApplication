@@ -18,13 +18,13 @@ namespace GameApplication
             {
                 for (int j = 0; j != Units.GetLength(1); j++)
                 {
-                    Units[i, j] = new Unit(UnitFG.STONE);
+                    Units[i, j] = new Unit(UnitFG.DIRT);
                 }
             }
 
             for (int i = Units.GetLength(0) / 2; i < Units.GetLength(0) / 2 + 5; i++)
             {
-                Units[i, Units.GetLength(1) / 2] = new Unit(UnitFG.STONE);
+                Units[i, Units.GetLength(1) / 2] = new Unit(UnitFG.DIRT);
             }
 
             Width = Units.GetLength(1) * Constants.UnitWidth;

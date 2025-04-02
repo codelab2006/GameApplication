@@ -15,17 +15,17 @@ namespace GameApplication
 
         public const int CollisionMargin = 16;
 
-        public const int CollisionStep = 8;
+        public const int CollisionStep = 4;
 
-        public const int MaxHorizontalVelocity = 512;
+        public const int MaxHorizontalVelocity = 360;
 
-        public const int MaxVerticalVelocity = 512;
+        public const int MaxVerticalVelocity = 360;
 
-        public const float InitialHorizontalAcceleration = 8f;
+        public const float InitialHorizontalAcceleration = 4f;
 
         public const float InitialUpAcceleration = 282f;
 
-        public const float ContinueUpAcceleration = 12f;
+        public const float ContinueUpAcceleration = 10f;
 
         public const float FrictionCoefficient = 0.25f;
 
