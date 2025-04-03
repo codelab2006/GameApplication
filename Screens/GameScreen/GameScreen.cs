@@ -60,7 +60,7 @@ namespace GameApplication
             {
                 _player.DrawTarget(_spriteBatch);
 
-                Global.GameGraphicsDevice.Clear(Color.White);
+                Global.GameGraphicsDevice.Clear(Color.Black);
 
                 _spriteBatch.Begin(transformMatrix: Global.Camera.GetViewMatrix());
 
