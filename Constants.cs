@@ -4,14 +4,14 @@ namespace GameApplication
 {
     public static class Constants
     {
-        public const int VirtualWidth = 1280;// 1920;
-        public const int VirtualHeight = 720;// 1080;
+        public const int VirtualWidth = 1920;
+        public const int VirtualHeight = 1080;
 
         public const int UnitWidth = 16;
         public const int UnitHeight = 16;
 
-        public const int WorldHCount = 500;
-        public const int WorldVCount = 20;
+        public const int WorldHCount = 500; // 8400;
+        public const int WorldVCount = 20; // 2400;
 
         public const int CollisionMargin = 16;
 

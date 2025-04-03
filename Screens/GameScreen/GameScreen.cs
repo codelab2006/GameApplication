@@ -7,6 +7,7 @@ namespace GameApplication
         private readonly World _world = new();
         private Vector2 _position = Vector2.Zero;
         private Player? _player;
+        private readonly Fog _fog = new();
 
         private readonly FPS _fps = new();
 
@@ -16,7 +17,7 @@ namespace GameApplication
 
             Global.World = _world;
 
-            _position = new Vector2(_world.Width / 2, 0);
+            _position = new Vector2(_world.Width / 2, _world.Height / 3);
 
             base.Initialize();
         }
@@ -54,11 +55,12 @@ namespace GameApplication
 
         public override void Draw(GameTime gameTime)
         {
+            _fog.DrawTarget(_spriteBatch, _position);
             if (_player != null)
             {
                 _player.DrawTarget(_spriteBatch);
 
-                Global.GameGraphicsDevice.Clear(Color.CornflowerBlue);
+                Global.GameGraphicsDevice.Clear(Color.White);
 
                 _spriteBatch.Begin(transformMatrix: Global.Camera.GetViewMatrix());
 
@@ -71,6 +73,7 @@ namespace GameApplication
 
                 _spriteBatch.End();
             }
+            _fog.Draw(_spriteBatch);
 
             _fps.Draw();
 
