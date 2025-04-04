@@ -16,10 +16,12 @@ namespace GameApplication
             AlphaDestinationBlend = Blend.Zero
         };
 
+        private readonly Texture2D _texture2D = Light.NewInstance(128);
+
         public Fog()
         {
             _renderTarget2D = Global.GameGraphicsDevice.CreateRenderTarget2D(Constants.VirtualWidth, Constants.VirtualHeight);
-            _texture2DWhiteA100.SetData([new Color(255, 255, 255, 128)]);
+            _texture2DWhiteA100.SetData([new Color(255, 255, 255, 255)]);
             _textureWhite2DA50.SetData([new Color(255, 255, 255, 128)]);
         }
 
@@ -45,6 +47,7 @@ namespace GameApplication
                     }
                 }
             }
+            spriteBatch.Draw(_texture2D, position, _texture2D.Bounds, Color.White, 0, _texture2D.Bounds.Center.ToVector2(), 1, SpriteEffects.None, 0);
             spriteBatch.End();
             graphicsDevice.SetRenderTarget(null);
         }

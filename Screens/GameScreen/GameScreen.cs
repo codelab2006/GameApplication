@@ -4,6 +4,7 @@ namespace GameApplication
 {
     public class GameScreen(Game game) : Screen(game)
     {
+        private readonly Background _background = new();
         private readonly World _world = new();
         private Vector2 _position = Vector2.Zero;
         private Player? _player;
@@ -55,26 +56,22 @@ namespace GameApplication
 
         public override void Draw(GameTime gameTime)
         {
-            _fog.DrawTarget(_spriteBatch, _position);
             if (_player != null)
             {
+                _background.DrawTarget(_spriteBatch);
                 _player.DrawTarget(_spriteBatch);
+                _fog.DrawTarget(_spriteBatch, _position);
 
                 Global.GameGraphicsDevice.Clear(Color.Black);
-
+                _background.Draw(_spriteBatch);
                 _spriteBatch.Begin(transformMatrix: Global.Camera.GetViewMatrix());
-
                 var rectangleF = _player.RectangleF;
                 _world.Draw(_spriteBatch, _position, Global.GetTargetPeripheralUnitsRange(_player.RectangleF.Center, rectangleF.Width, rectangleF.Height, Constants.CollisionMargin, Constants.UnitHeight, Constants.UnitWidth, Constants.WorldVCount, Constants.WorldHCount));
-
                 // _world.Draw(_spriteBatch, _position);
-
                 _player?.Draw(_spriteBatch);
-
                 _spriteBatch.End();
+                _fog.Draw(_spriteBatch);
             }
-            _fog.Draw(_spriteBatch);
-
             _fps.Draw();
 
             base.Draw(gameTime);

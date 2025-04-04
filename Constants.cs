@@ -10,7 +10,7 @@ namespace GameApplication
         public const int UnitWidth = 16;
         public const int UnitHeight = 16;
 
-        public const int WorldHCount = 500; // 8400;
+        public const int WorldHCount = 50; // 8400;
         public const int WorldVCount = 20; // 2400;
 
         public const int CollisionMargin = 16;
