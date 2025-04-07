@@ -16,7 +16,7 @@ namespace GameApplication
             AlphaDestinationBlend = Blend.Zero
         };
 
-        private readonly Texture2D _texture2D = Light.NewInstance(128);
+        private readonly Texture2D _texture2D = CircleLight.NewInstance(256, Color.White);
 
         public Fog()
         {

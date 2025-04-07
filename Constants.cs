@@ -23,7 +23,7 @@ namespace GameApplication
 
         public const float InitialHorizontalAcceleration = 4f;
 
-        public const float InitialUpAcceleration = 282f;
+        public const float InitialUpAcceleration = 270f;
 
         public const float ContinueUpAcceleration = 10f;
 
