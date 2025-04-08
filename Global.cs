@@ -44,7 +44,7 @@ namespace GameApplication
             float? newPositionY = null, newPositionX = null;
             var rectangle = getRectangle(currentPosition);
             float rectWidth = rectangle.Width, rectHeight = rectangle.Height;
-            var (vIndexes, hIndexes) = GetTargetVHPeripheralUnitsIndexes(rectangle.Center,
+            var (vtIndexes, vbIndexes, hlIndexes, hrIndexes) = GetTargetVHPeripheralUnitsIndexes(rectangle.Center,
                 rectWidth,
                 rectHeight,
                 margin,
@@ -58,45 +58,127 @@ namespace GameApplication
                 var stepVCollisionRectangle = getRectangle(Move(currentPosition, new(0, stepVelocity.Y + (stepVelocity.Y < 0 ? -1 : 0))));
                 if (!bCollision && !tCollision)
                 {
-                    foreach (var (vi, hi) in vIndexes)
+                    if (stepVelocity.Y > 0)
                     {
-                        IUnit? unit = units[vi, hi];
-                        if (unit == null || !unit.IsStatic) continue;
-
-                        var uRectangle = new RectangleF(hi * unitWidth, vi * unitHeight, unitWidth, unitHeight);
-                        if (!uRectangle.Intersects(stepVCollisionRectangle)) continue;
-                        if (stepVelocity.Y > 0 && uRectangle.Center.Y > stepVCollisionRectangle.Center.Y)
+                        foreach (var (vi, hi) in vbIndexes)
                         {
-                            newPositionY = newPositionY.HasValue ? MathF.Min(newPositionY.Value, uRectangle.Top - (float)rectHeight / 2) : uRectangle.Top - (float)rectHeight / 2;
-                            bCollision = true;
+                            IUnit? unit = units[vi, hi];
+                            if (unit == null || !unit.IsStatic) continue;
+
+                            var uRectangle = new RectangleF(hi * unitWidth, vi * unitHeight, unitWidth, unitHeight);
+                            if (!uRectangle.Intersects(stepVCollisionRectangle)) continue;
+                            if (uRectangle.Center.Y > stepVCollisionRectangle.Center.Y)
+                            {
+                                newPositionY = newPositionY.HasValue ? MathF.Min(newPositionY.Value, uRectangle.Top - (float)rectHeight / 2) : uRectangle.Top - (float)rectHeight / 2;
+                                bCollision = true;
+                            }
                         }
-
-                        if (stepVelocity.Y < 0 && uRectangle.Center.Y < stepVCollisionRectangle.Center.Y)
+                    }
+                    if (stepVelocity.Y < 0)
+                    {
+                        foreach (var (vi, hi) in vtIndexes)
                         {
-                            newPositionY = newPositionY.HasValue ? MathF.Max(newPositionY.Value, uRectangle.Bottom + (float)rectHeight / 2) : uRectangle.Bottom + (float)rectHeight / 2;
-                            tCollision = true;
+                            IUnit? unit = units[vi, hi];
+                            if (unit == null || !unit.IsStatic) continue;
+
+                            var uRectangle = new RectangleF(hi * unitWidth, vi * unitHeight, unitWidth, unitHeight);
+                            if (!uRectangle.Intersects(stepVCollisionRectangle)) continue;
+                            if (uRectangle.Center.Y < stepVCollisionRectangle.Center.Y)
+                            {
+                                newPositionY = newPositionY.HasValue ? MathF.Max(newPositionY.Value, uRectangle.Bottom + (float)rectHeight / 2) : uRectangle.Bottom + (float)rectHeight / 2;
+                                tCollision = true;
+                            }
                         }
                     }
                 }
                 var stepHCollisionRectangle = getRectangle(Move(currentPosition, new(stepVelocity.X + (stepVelocity.X < 0 ? -1 : 0), 0)));
                 if (!rCollision && !lCollision)
                 {
-                    foreach (var (vi, hi) in hIndexes)
+                    List<(int vi, int hi, RectangleF uRectangle)> collisionRectangles = [];
+                    if (stepVelocity.X > 0)
                     {
-                        IUnit? unit = units[vi, hi];
-                        if (unit == null || !unit.IsStatic) continue;
+                        collisionRectangles = new(hrIndexes.Length);
+                        foreach (var (vi, hi) in hrIndexes)
+                        {
+                            IUnit? unit = units[vi, hi];
+                            if (unit == null || !unit.IsStatic) continue;
 
-                        var uRectangle = new RectangleF(hi * unitWidth, vi * unitHeight, unitWidth, unitHeight);
-                        if (!uRectangle.Intersects(stepHCollisionRectangle)) continue;
-                        if (stepVelocity.X > 0 && uRectangle.Center.X > stepHCollisionRectangle.Center.X)
-                        {
-                            newPositionX = newPositionX.HasValue ? MathF.Min(newPositionX.Value, uRectangle.Left - (float)rectWidth / 2) : uRectangle.Left - (float)rectWidth / 2;
-                            rCollision = true;
+                            var uRectangle = new RectangleF(hi * unitWidth, vi * unitHeight, unitWidth, unitHeight);
+                            if (!uRectangle.Intersects(stepHCollisionRectangle)) continue;
+                            if (uRectangle.Center.X > stepHCollisionRectangle.Center.X)
+                            {
+                                var v = uRectangle.Left - (float)rectWidth / 2;
+                                if (newPositionX.HasValue)
+                                {
+                                    if (newPositionX.Value >= v)
+                                    {
+                                        newPositionX = v;
+                                        collisionRectangles.Add((vi, hi, uRectangle));
+                                    }
+                                }
+                                else
+                                {
+                                    newPositionX = v;
+                                    collisionRectangles.Add((vi, hi, uRectangle));
+                                }
+                                rCollision = true;
+                            }
                         }
-                        if (stepVelocity.X < 0 && uRectangle.Center.X < stepHCollisionRectangle.Center.X)
+                    }
+                    if (stepVelocity.X < 0)
+                    {
+                        collisionRectangles = new(hlIndexes.Length);
+                        foreach (var (vi, hi) in hlIndexes)
                         {
-                            newPositionX = newPositionX.HasValue ? MathF.Max(newPositionX.Value, uRectangle.Right + (float)rectWidth / 2) : uRectangle.Right + (float)rectWidth / 2;
-                            lCollision = true;
+                            IUnit? unit = units[vi, hi];
+                            if (unit == null || !unit.IsStatic) continue;
+
+                            var uRectangle = new RectangleF(hi * unitWidth, vi * unitHeight, unitWidth, unitHeight);
+                            if (!uRectangle.Intersects(stepHCollisionRectangle)) continue;
+                            if (uRectangle.Center.X < stepHCollisionRectangle.Center.X)
+                            {
+                                var v = uRectangle.Right + (float)rectWidth / 2;
+                                if (newPositionX.HasValue)
+                                {
+                                    if (newPositionX.Value <= v)
+                                    {
+                                        newPositionX = v;
+                                        collisionRectangles.Add((vi, hi, uRectangle));
+                                    }
+                                }
+                                else
+                                {
+                                    newPositionX = v;
+                                    collisionRectangles.Add((vi, hi, uRectangle));
+                                }
+                                lCollision = true;
+                            }
+                        }
+
+                    }
+                    if (bCollision && collisionRectangles.Count == 1)
+                    {
+                        (int _, int _, RectangleF lastCollisionRectangle) = collisionRectangles[^1];
+                        var center = lastCollisionRectangle.Center;
+                        if (center.Y > rectangle.Center.Y)
+                        {
+                            if (center.Y > rectangle.Bottom - unitHeight && center.Y < rectangle.Bottom)
+                            {
+                                if (rCollision)
+                                {
+                                    newPositionY = lastCollisionRectangle.Top - (float)rectHeight / 2;
+                                    newPositionX++;
+                                    rCollision = false;
+                                    break;
+                                }
+                                if (lCollision)
+                                {
+                                    newPositionY = lastCollisionRectangle.Top - (float)rectHeight / 2;
+                                    newPositionX--;
+                                    lCollision = false;
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
@@ -111,31 +193,37 @@ namespace GameApplication
             return (newPosition, tCollision, bCollision, lCollision, rCollision);
         }
 
-        private static ((int v, int h)[] v, (int v, int h)[] h) GetTargetVHPeripheralUnitsIndexes(Vector2 center, float width, float height, int margin, int unitHeight, int unitWidth, int totalVCount, int totalHCount)
+        private static ((int v, int h)[] vt, (int v, int h)[] vb, (int v, int h)[] hl, (int v, int h)[] hr) GetTargetVHPeripheralUnitsIndexes(Vector2 center, float width, float height, int margin, int unitHeight, int unitWidth, int totalVCount, int totalHCount)
         {
             var (vTFrom, vTTo, vBFrom, vBTo, hLFrom, hLTo, hRFrom, hRTo) = GetTargetPeripheralUnitsRange(center, width, height, margin, unitHeight, unitWidth, totalVCount, totalHCount);
 
-            var vResult = new List<(int i, int j)>((vBTo - vTFrom) * (hRFrom - hLTo));
+            var vTResult = new List<(int i, int j)>((hRTo - hLFrom) * (vTTo - vTFrom));
+            var vBResult = new List<(int i, int j)>((hRTo - hLFrom) * (vBTo - vBFrom));
             for (int i = vTFrom; i < vBTo; i++)
             {
                 for (int j = hLFrom; j < hRTo; j++)
                 {
-                    if ((i >= vTFrom && i < vTTo) || (i >= vBFrom && i < vBTo))
-                        vResult.Add((i, j));
+                    if (i >= vTFrom && i < vTTo)
+                        vTResult.Add((i, j));
+                    if (i >= vBFrom && i < vBTo)
+                        vBResult.Add((i, j));
                 }
             }
 
-            var hResult = new List<(int i, int j)>((vBFrom - vTTo) * (hRTo - hLFrom));
+            var hLResult = new List<(int i, int j)>((vBTo - vTFrom) * (hLTo - hLFrom));
+            var hRResult = new List<(int i, int j)>((vBTo - vTFrom) * (hRTo - hRFrom));
             for (int j = hLFrom; j < hRTo; j++)
             {
                 for (int i = vTFrom; i < vBTo; i++)
                 {
-                    if ((j >= hLFrom && j < hLTo) || (j >= hRFrom && j < hRTo))
-                        hResult.Add((i, j));
+                    if (j >= hLFrom && j < hLTo)
+                        hLResult.Add((i, j));
+                    if (j >= hRFrom && j < hRTo)
+                        hRResult.Add((i, j));
                 }
             }
 
-            return (v: [.. vResult], h: [.. hResult]);
+            return (vt: [.. vTResult], vb: [.. vBResult], hl: [.. hLResult], hr: [.. hRResult]);
         }
 
         public static (int vTFrom, int vTTo, int vBFrom, int vBTo, int hLFrom, int hLTo, int hRFrom, int hRTo) GetTargetPeripheralUnitsRange(Vector2 center, float width, float height, int margin, int unitHeight, int unitWidth, int totalVCount, int totalHCount)

@@ -22,7 +22,7 @@ namespace GameApplication
                 }
             }
 
-            for (int i = Units.GetLength(0) / 2; i < Units.GetLength(0) / 2 + 5; i++)
+            for (int i = Units.GetLength(0) / 2 + 4; i < Units.GetLength(0) / 2 + 5; i++)
             {
                 Units[i, Units.GetLength(1) / 2] = new Unit(UnitFG.DIRT);
             }
