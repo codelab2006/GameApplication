@@ -22,10 +22,15 @@ namespace GameApplication
                 }
             }
 
-            for (int i = Units.GetLength(0) / 2 + 4; i < Units.GetLength(0) / 2 + 5; i++)
-            {
-                Units[i, Units.GetLength(1) / 2] = new Unit(UnitFG.DIRT);
-            }
+
+            Units[Units.GetLength(0) / 2 + 4, Units.GetLength(1) / 2] = new Unit(UnitFG.DIRT);
+
+            Units[Units.GetLength(0) / 2 + 4, Units.GetLength(1) / 2 + 1] = new Unit(UnitFG.DIRT);
+            Units[Units.GetLength(0) / 2 + 3, Units.GetLength(1) / 2 + 1] = new Unit(UnitFG.DIRT);
+
+            Units[Units.GetLength(0) / 2 + 4, Units.GetLength(1) / 2 + 2] = new Unit(UnitFG.DIRT);
+            Units[Units.GetLength(0) / 2 + 3, Units.GetLength(1) / 2 + 2] = new Unit(UnitFG.DIRT);
+            Units[Units.GetLength(0) / 2 + 2, Units.GetLength(1) / 2 + 2] = new Unit(UnitFG.DIRT);
 
             Width = Units.GetLength(1) * Constants.UnitWidth;
             Height = Units.GetLength(0) * Constants.UnitHeight;
