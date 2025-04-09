@@ -164,20 +164,31 @@ namespace GameApplication
                         {
                             if (center.Y > rectangle.Bottom - unitHeight && center.Y < rectangle.Bottom)
                             {
-                                if (rCollision)
-                                {
-                                    newPositionY = lastCollisionRectangle.Top - (float)rectHeight / 2;
-                                    newPositionX++;
-                                    rCollision = false;
-                                    break;
-                                }
-                                if (lCollision)
-                                {
-                                    newPositionY = lastCollisionRectangle.Top - (float)rectHeight / 2;
-                                    newPositionX--;
-                                    lCollision = false;
-                                    break;
-                                }
+                                if (rCollision &&
+                                    TryAdjustPosition(
+                                        direction: +1,
+                                        lastCollisionRectangle,
+                                        rectHeight,
+                                        unitWidth,
+                                        unitHeight,
+                                        getRectangle,
+                                        vtIndexes,
+                                        units,
+                                        ref newPositionX,
+                                        ref newPositionY,
+                                        ref rCollision)) break;
+                                if (lCollision && TryAdjustPosition(
+                                        direction: -1,
+                                        lastCollisionRectangle,
+                                        rectHeight,
+                                        unitWidth,
+                                        unitHeight,
+                                        getRectangle,
+                                        vtIndexes,
+                                        units,
+                                        ref newPositionX,
+                                        ref newPositionY,
+                                        ref lCollision)) break;
                             }
                         }
                     }
@@ -191,6 +202,52 @@ namespace GameApplication
             if (newPositionX != null) newPosition.X = MathF.Floor((float)newPositionX);
 
             return (newPosition, tCollision, bCollision, lCollision, rCollision);
+        }
+
+        private static bool TryAdjustPosition(
+            int direction,
+            RectangleF lastCollisionRectangle,
+            float rectHeight,
+            float unitWidth,
+            float unitHeight,
+            Func<Vector2, RectangleF> getRectangle,
+            (int vi, int hi)[] vtIndexes,
+            IUnit?[,] units,
+            ref float? newPositionX,
+            ref float? newPositionY,
+            ref bool collisionFlag)
+        {
+            if (!newPositionX.HasValue) return false;
+
+            var tempNewPositionY = lastCollisionRectangle.Top - rectHeight / 2f;
+            var tempNewPositionX = newPositionX.Value + direction;
+            var tempVCollisionRectangle = getRectangle(new Vector2(tempNewPositionX, tempNewPositionY));
+            var tempTCollision = false;
+
+            foreach (var (vi, hi) in vtIndexes)
+            {
+                IUnit? unit = units[vi, hi];
+                if (unit == null || !unit.IsStatic) continue;
+
+                var uRectangle = new RectangleF(hi * unitWidth, vi * unitHeight, unitWidth, unitHeight);
+                if (!uRectangle.Intersects(tempVCollisionRectangle)) continue;
+
+                if (uRectangle.Center.Y < tempVCollisionRectangle.Center.Y)
+                {
+                    tempTCollision = true;
+                    break;
+                }
+            }
+
+            if (!tempTCollision)
+            {
+                newPositionY = tempNewPositionY;
+                newPositionX = tempNewPositionX;
+                collisionFlag = false;
+                return true;
+            }
+
+            return false;
         }
 
         private static ((int v, int h)[] vt, (int v, int h)[] vb, (int v, int h)[] hl, (int v, int h)[] hr) GetTargetVHPeripheralUnitsIndexes(Vector2 center, float width, float height, int margin, int unitHeight, int unitWidth, int totalVCount, int totalHCount)
