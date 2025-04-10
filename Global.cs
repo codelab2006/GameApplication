@@ -25,7 +25,7 @@ namespace GameApplication
                 int collisionStep,
                 Func<Vector2, RectangleF> getRectangle,
                 int margin, int unitHeight, int unitWidth, int totalVCount, int totalHCount,
-                IUnit[,] units,
+                IUnit?[,] units,
                 float elapsedSeconds)
         {
             bool tCollision = false, bCollision = false, lCollision = false, rCollision = false;
@@ -295,6 +295,11 @@ namespace GameApplication
             var (vFrom, vTo) = GetTargetVUnitsRange(center, height, unitHeight, totalVCount);
             var (hFrom, hTo) = GetTargetHUnitsRange(center, width, unitWidth, totalHCount);
             return (vFrom, vTo, hFrom, hTo);
+        }
+
+        public static (int vi, int hi) GetTargetUnitIndex(Vector2 p, float unitHeight, float unitWidth)
+        {
+            return ((int)(p.Y / unitHeight), (int)(p.X / unitWidth));
         }
 
         private static (int vFrom, int vTo) GetTargetVUnitsRange(Vector2 center, float height, float unitHeight, int totalVCount)

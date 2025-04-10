@@ -29,6 +29,8 @@ namespace GameApplication
 
         private bool _debugKeyDown = false;
 
+        private MouseState _previousMouseState;
+
         public Player() : base(null, new(0, 0, Constants.PlayerWidth, Constants.PlayerHeight))
         {
             _renderTarget2D = Global.GameGraphicsDevice.CreateRenderTarget2D(
@@ -71,6 +73,32 @@ namespace GameApplication
         public void Update(GameTime gameTime)
         {
             if (DebugPosition()) return;
+
+            var currentMouseState = Mouse.GetState();
+
+            if (currentMouseState.LeftButton == ButtonState.Pressed &&
+                _previousMouseState.LeftButton == ButtonState.Released)
+            {
+                var point = Global.Camera.ScreenToWorld(currentMouseState.X, currentMouseState.Y);
+                if (point.X >= 0 && point.Y >= 0 && point.X < Global.World.Width && point.Y < Global.World.Height)
+                {
+                    var (vi, hi) = Global.GetTargetUnitIndex(point, Constants.UnitHeight, Constants.UnitWidth);
+                    Global.World.SetUnitAt(vi, hi, new Unit(UnitFG.DIRT));
+                }
+            }
+
+            if (currentMouseState.RightButton == ButtonState.Pressed &&
+                _previousMouseState.RightButton == ButtonState.Released)
+            {
+                var point = Global.Camera.ScreenToWorld(currentMouseState.X, currentMouseState.Y);
+                if (point.X >= 0 && point.Y >= 0 && point.X < Global.World.Width && point.Y < Global.World.Height)
+                {
+                    var (vi, hi) = Global.GetTargetUnitIndex(point, Constants.UnitHeight, Constants.UnitWidth);
+                    Global.World.SetUnitAt(vi, hi, null);
+                }
+            }
+            _previousMouseState = currentMouseState;
+
             var state = Keyboard.GetState();
 
             _velocity = Global.UpdateVelocityByGravity(_velocity, Constants.GravityAcceleration, Constants.MaxVerticalVelocity);
@@ -105,8 +133,6 @@ namespace GameApplication
                 if (MathF.Abs(_velocity.X) > Constants.MaxHorizontalVelocity) _velocity.X = MathF.Sign(_velocity.X) * Constants.MaxHorizontalVelocity;
             }
 
-            // Console.WriteLine(_velocity);
-
             if (_velocity.X > 0) _isFlipped = false;
             if (_velocity.X < 0) _isFlipped = true;
 
@@ -135,7 +161,7 @@ namespace GameApplication
 
             Position = position;
 
-            Console.WriteLine($"{Position}, {_tCollision}, {_bCollision}, {_lCollision}, {_rCollision}");
+            // Console.WriteLine($"{Position}, {_tCollision}, {_bCollision}, {_lCollision}, {_rCollision}");
 
             if ((_tCollision && _velocity.Y < 0) || (_bCollision && _velocity.Y > 0))
                 _velocity.Y = 0;

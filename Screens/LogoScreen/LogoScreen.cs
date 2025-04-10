@@ -9,7 +9,7 @@ namespace GameApplication
 
         protected override void LoadContent()
         {
-            _logo = new(Global.Content.Load<Texture2D>("o"));
+            _logo = new(Global.Content.Load<Texture2D>("monogame"));
             base.LoadContent();
         }
 

@@ -1,3 +1,5 @@
+using System;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -5,7 +7,7 @@ namespace GameApplication
 {
     public class World
     {
-        public Unit[,] Units { get; private set; } = new Unit[0, 0];
+        public Unit?[,] Units { get; private set; } = new Unit[0, 0];
         public int Width { get; private set; } = 0;
         public int Height { get; private set; } = 0;
 
@@ -34,11 +36,18 @@ namespace GameApplication
 
             Width = Units.GetLength(1) * Constants.UnitWidth;
             Height = Units.GetLength(0) * Constants.UnitHeight;
+
+            Console.WriteLine($"World Width: {Width}, Height: {Height}");
         }
 
         public void LoadContent()
         {
             _texture2D = Global.Content.Load<Texture2D>("world-units");
+        }
+
+        public void SetUnitAt(int vi, int hi, Unit? unit)
+        {
+            Units[vi, hi] = unit;
         }
 
         public void Draw(SpriteBatch spriteBatch, Vector2 position)
