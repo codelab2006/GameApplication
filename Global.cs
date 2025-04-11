@@ -159,37 +159,33 @@ namespace GameApplication
                     if (bCollision && collisionRectangles.Count == 1)
                     {
                         (int _, int _, RectangleF lastCollisionRectangle) = collisionRectangles[^1];
-                        var center = lastCollisionRectangle.Center;
-                        if (center.Y > rectangle.Center.Y)
+                        if (lastCollisionRectangle.Bottom == rectangle.Bottom && lastCollisionRectangle.Center.Y > rectangle.Center.Y)
                         {
-                            if (center.Y > rectangle.Bottom - unitHeight && center.Y < rectangle.Bottom)
-                            {
-                                if (rCollision &&
-                                    TryAdjustPosition(
-                                        direction: +1,
-                                        lastCollisionRectangle,
-                                        rectHeight,
-                                        unitWidth,
-                                        unitHeight,
-                                        getRectangle,
-                                        vtIndexes,
-                                        units,
-                                        ref newPositionX,
-                                        ref newPositionY,
-                                        ref rCollision)) break;
-                                if (lCollision && TryAdjustPosition(
-                                        direction: -1,
-                                        lastCollisionRectangle,
-                                        rectHeight,
-                                        unitWidth,
-                                        unitHeight,
-                                        getRectangle,
-                                        vtIndexes,
-                                        units,
-                                        ref newPositionX,
-                                        ref newPositionY,
-                                        ref lCollision)) break;
-                            }
+                            if (rCollision &&
+                                TryAdjustPosition(
+                                    direction: +1,
+                                    lastCollisionRectangle,
+                                    rectHeight,
+                                    unitWidth,
+                                    unitHeight,
+                                    getRectangle,
+                                    vtIndexes,
+                                    units,
+                                    ref newPositionX,
+                                    ref newPositionY,
+                                    ref rCollision)) break;
+                            if (lCollision && TryAdjustPosition(
+                                    direction: -1,
+                                    lastCollisionRectangle,
+                                    rectHeight,
+                                    unitWidth,
+                                    unitHeight,
+                                    getRectangle,
+                                    vtIndexes,
+                                    units,
+                                    ref newPositionX,
+                                    ref newPositionY,
+                                    ref lCollision)) break;
                         }
                     }
                 }
