@@ -1,3 +1,5 @@
+using System;
+
 using Microsoft.Xna.Framework;
 
 namespace GameApplication
@@ -18,7 +20,10 @@ namespace GameApplication
 
             Global.World = _world;
 
+            // _position = new Vector2(Constants.PlayerWidth / 2, _world.Height / 3);
             _position = new Vector2(_world.Width / 2, _world.Height / 3);
+
+            Console.WriteLine($"Initialization Position: {_position}");
 
             base.Initialize();
         }
@@ -65,9 +70,8 @@ namespace GameApplication
                 Global.GameGraphicsDevice.Clear(Color.Black);
                 _background.Draw(_spriteBatch);
                 _spriteBatch.Begin(transformMatrix: Global.Camera.GetViewMatrix());
-                var rectangleF = _player.RectangleF;
-                _world.Draw(_spriteBatch, _position, Global.GetTargetPeripheralUnitsRange(_player.RectangleF.Center, rectangleF.Width, rectangleF.Height, Constants.CollisionMargin, Constants.UnitHeight, Constants.UnitWidth, Constants.WorldVCount, Constants.WorldHCount));
-                // _world.Draw(_spriteBatch, _position);
+                _world.Draw(_spriteBatch, _position);
+                // _world.Draw(_spriteBatch, _position, Global.GetTargetPeripheralUnitsRange(_player.RectangleF.Center, _player.RectangleF.Width, _player.RectangleF.Height, Constants.CollisionMargin, Constants.UnitHeight, Constants.UnitWidth, Constants.WorldVCount, Constants.WorldHCount));
                 _player?.Draw(_spriteBatch);
                 _spriteBatch.End();
                 _fog.Draw(_spriteBatch);

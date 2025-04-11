@@ -75,26 +75,20 @@ namespace GameApplication
             if (DebugPosition()) return;
 
             var currentMouseState = Mouse.GetState();
-
-            if (currentMouseState.LeftButton == ButtonState.Pressed &&
-                _previousMouseState.LeftButton == ButtonState.Released)
+            var point = Global.Camera.ScreenToWorld(currentMouseState.X, currentMouseState.Y);
+            if (point.X >= 0 && point.Y >= 0 && point.X < Global.World.Width && point.Y < Global.World.Height)
             {
-                var point = Global.Camera.ScreenToWorld(currentMouseState.X, currentMouseState.Y);
-                if (point.X >= 0 && point.Y >= 0 && point.X < Global.World.Width && point.Y < Global.World.Height)
+                var rect = GetRectangleFByPosition(Position);
+                if (!rect.Contains(point))
                 {
                     var (vi, hi) = Global.GetTargetUnitIndex(point, Constants.UnitHeight, Constants.UnitWidth);
-                    Global.World.SetUnitAt(vi, hi, new Unit(UnitFG.DIRT));
-                }
-            }
+                    if (currentMouseState.LeftButton == ButtonState.Pressed &&
+                        _previousMouseState.LeftButton == ButtonState.Released)
+                        Global.World.SetUnitAt(vi, hi, new Unit(UnitFG.DIRT));
 
-            if (currentMouseState.RightButton == ButtonState.Pressed &&
-                _previousMouseState.RightButton == ButtonState.Released)
-            {
-                var point = Global.Camera.ScreenToWorld(currentMouseState.X, currentMouseState.Y);
-                if (point.X >= 0 && point.Y >= 0 && point.X < Global.World.Width && point.Y < Global.World.Height)
-                {
-                    var (vi, hi) = Global.GetTargetUnitIndex(point, Constants.UnitHeight, Constants.UnitWidth);
-                    Global.World.SetUnitAt(vi, hi, null);
+                    if (currentMouseState.RightButton == ButtonState.Pressed &&
+                        _previousMouseState.RightButton == ButtonState.Released)
+                        Global.World.SetUnitAt(vi, hi, null);
                 }
             }
             _previousMouseState = currentMouseState;
