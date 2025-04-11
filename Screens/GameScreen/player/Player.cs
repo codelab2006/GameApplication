@@ -79,9 +79,9 @@ namespace GameApplication
             if (point.X >= 0 && point.Y >= 0 && point.X < Global.World.Width && point.Y < Global.World.Height)
             {
                 var rect = GetRectangleFByPosition(Position);
-                if (!rect.Contains(point))
+                var (vi, hi) = Global.GetTargetUnitIndex(point, Constants.UnitHeight, Constants.UnitWidth);
+                if (!rect.Contains(point) && !rect.Intersects(new RectangleF(hi * Constants.UnitWidth, vi * Constants.UnitHeight, Constants.UnitWidth, Constants.UnitHeight)))
                 {
-                    var (vi, hi) = Global.GetTargetUnitIndex(point, Constants.UnitHeight, Constants.UnitWidth);
                     if (currentMouseState.LeftButton == ButtonState.Pressed &&
                         _previousMouseState.LeftButton == ButtonState.Released)
                         Global.World.SetUnitAt(vi, hi, new Unit(UnitFG.DIRT));
