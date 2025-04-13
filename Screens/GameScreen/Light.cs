@@ -83,4 +83,9 @@ namespace GameApplication
             return texture;
         }
     }
+
+    public interface ILightRenderer
+    {
+        void DrawLight(SpriteBatch spriteBatch, Vector2 position);
+    }
 }

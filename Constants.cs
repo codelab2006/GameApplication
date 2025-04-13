@@ -10,16 +10,16 @@ namespace GameApplication
         public const int UnitWidth = 16;
         public const int UnitHeight = 16;
 
-        public const int WorldHCount = 50; // 8400;
+        public const int WorldHCount = 100; // 8400;
         public const int WorldVCount = 20; // 2400;
 
         public const int CollisionMargin = 16;
 
         public const int CollisionStep = 4;
 
-        public const int MaxHorizontalVelocity = 360;
+        public const int MaxHorizontalVelocity = 500;
 
-        public const int MaxVerticalVelocity = 360;
+        public const int MaxVerticalVelocity = 500;
 
         public const float InitialHorizontalAcceleration = 4f;
 

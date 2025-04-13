@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace GameApplication
 {
-    public class Player : Sprite
+    public class Player : Sprite, ILightRenderer
     {
         private readonly RenderTarget2D _renderTarget2D;
 
@@ -30,6 +30,8 @@ namespace GameApplication
         private bool _debugKeyDown = false;
 
         private MouseState _previousMouseState;
+
+        private readonly Texture2D _lightTexture2D = CircleLight.NewInstance(256, Color.White);
 
         public Player() : base(null, new(0, 0, Constants.PlayerWidth, Constants.PlayerHeight))
         {
@@ -200,6 +202,11 @@ namespace GameApplication
         public override void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(_renderTarget2D, Position, _renderTarget2D.Bounds, Color, Rotation, _renderTarget2DOrigin, Scale, Effects, LayerDepth);
+        }
+
+        public void DrawLight(SpriteBatch spriteBatch, Vector2 position)
+        {
+            spriteBatch.Draw(_lightTexture2D, position, _lightTexture2D.Bounds, Color.White, 0, _lightTexture2D.Bounds.Center.ToVector2(), 1, SpriteEffects.None, 0);
         }
     }
 }

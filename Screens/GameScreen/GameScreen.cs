@@ -33,12 +33,14 @@ namespace GameApplication
             _fps.LoadContent();
 
             _world.LoadContent();
+            _fog.AddLightRenderer(nameof(World), _world);
 
             _player = new()
             {
                 Position = _position,
             };
             _player.LoadContent();
+            _fog.AddLightRenderer(nameof(Player), _player);
 
             Global.Camera.LookAt(_position);
 

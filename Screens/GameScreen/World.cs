@@ -5,13 +5,16 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace GameApplication
 {
-    public class World
+    public class World : ILightRenderer
     {
         public Unit?[,] Units { get; private set; } = new Unit[0, 0];
         public int Width { get; private set; } = 0;
         public int Height { get; private set; } = 0;
 
         private Texture2D? _texture2D;
+
+        private readonly Texture2D _texture2DWhiteA100 = Global.GameGraphicsDevice.CreateTexture2D(1, 1);
+        private readonly Texture2D _textureWhite2DA50 = Global.GameGraphicsDevice.CreateTexture2D(1, 1);
 
         public void Initialize()
         {
@@ -38,6 +41,9 @@ namespace GameApplication
             Height = Units.GetLength(0) * Constants.UnitHeight;
 
             Console.WriteLine($"World Width: {Width}, Height: {Height}");
+
+            _texture2DWhiteA100.SetData([new Color(255, 255, 255, 255)]);
+            _textureWhite2DA50.SetData([new Color(255, 255, 255, 128)]);
         }
 
         public void LoadContent()
@@ -75,6 +81,26 @@ namespace GameApplication
                             color = Color.Blue;
 
                         spriteBatch.Draw(_texture2D, new Vector2(j * Constants.UnitWidth, i * Constants.UnitHeight), new Rectangle((int)unit.FG * Constants.UnitWidth, 0, Constants.UnitWidth, Constants.UnitHeight), color, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+                    }
+                }
+            }
+        }
+
+        public void DrawLight(SpriteBatch spriteBatch, Vector2 position)
+        {
+            var (vFrom, vTo, hFrom, hTo) = Global.GetTargetUnitsRange(position, Constants.VirtualWidth, Constants.VirtualHeight, Constants.UnitHeight, Constants.UnitWidth, Constants.WorldVCount, Constants.WorldHCount);
+            for (int i = vFrom; i < vTo; i++)
+            {
+                for (int j = hFrom; j < hTo; j++)
+                {
+                    var unit = Global.World.Units[i, j];
+                    if (unit == null)
+                    {
+                        spriteBatch.Draw(_texture2DWhiteA100, new Rectangle(j * Constants.UnitWidth, i * Constants.UnitHeight, Constants.UnitWidth, Constants.UnitHeight), Color.White);
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(_textureWhite2DA50, new Rectangle(j * Constants.UnitWidth, i * Constants.UnitHeight, Constants.UnitWidth, Constants.UnitHeight), Color.White);
                     }
                 }
             }

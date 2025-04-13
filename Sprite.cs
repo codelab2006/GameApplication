@@ -6,7 +6,7 @@ namespace GameApplication
     public abstract class Sprite
     {
         private readonly Texture2D? _texture2D;
-        private readonly Rectangle _sourceRectangle = Rectangle.Empty;
+        protected Rectangle _sourceRectangle = Rectangle.Empty;
         public Vector2 Position { get; set; } = Vector2.Zero;
         public Color Color { get; set; } = Color.White;
         public float Rotation { get; set; } = 0;

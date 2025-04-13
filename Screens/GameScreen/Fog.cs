@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -6,8 +8,6 @@ namespace GameApplication
     public class Fog
     {
         private readonly RenderTarget2D _renderTarget2D;
-        private readonly Texture2D _texture2DWhiteA100 = Global.GameGraphicsDevice.CreateTexture2D(1, 1);
-        private readonly Texture2D _textureWhite2DA50 = Global.GameGraphicsDevice.CreateTexture2D(1, 1);
         private readonly BlendState _multiply = new()
         {
             ColorSourceBlend = Blend.DestinationColor,
@@ -16,13 +16,23 @@ namespace GameApplication
             AlphaDestinationBlend = Blend.Zero
         };
 
-        private readonly Texture2D _texture2D = CircleLight.NewInstance(256, Color.White);
+
+
+        private readonly Dictionary<string, ILightRenderer> _lightRenderers = [];
 
         public Fog()
         {
             _renderTarget2D = Global.GameGraphicsDevice.CreateRenderTarget2D(Constants.VirtualWidth, Constants.VirtualHeight);
-            _texture2DWhiteA100.SetData([new Color(255, 255, 255, 255)]);
-            _textureWhite2DA50.SetData([new Color(255, 255, 255, 128)]);
+        }
+
+        public void AddLightRenderer(string name, ILightRenderer lightRenderer)
+        {
+            _lightRenderers.Add(name, lightRenderer);
+        }
+
+        public void RemoveLightRenderer(string name)
+        {
+            _lightRenderers.Remove(name);
         }
 
         public void DrawTarget(SpriteBatch spriteBatch, Vector2 position)
@@ -31,23 +41,10 @@ namespace GameApplication
             graphicsDevice.SetRenderTarget(_renderTarget2D);
             graphicsDevice.Clear(Color.Black);
             spriteBatch.Begin(blendState: BlendState.Additive, transformMatrix: Global.Camera.GetViewMatrix());
-            var (vFrom, vTo, hFrom, hTo) = Global.GetTargetUnitsRange(position, Constants.VirtualWidth, Constants.VirtualHeight, Constants.UnitHeight, Constants.UnitWidth, Constants.WorldVCount, Constants.WorldHCount);
-            for (int i = vFrom; i < vTo; i++)
+            foreach (var renderer in _lightRenderers.Values)
             {
-                for (int j = hFrom; j < hTo; j++)
-                {
-                    var unit = Global.World.Units[i, j];
-                    if (unit == null)
-                    {
-                        spriteBatch.Draw(_texture2DWhiteA100, new Rectangle(j * Constants.UnitWidth, i * Constants.UnitHeight, Constants.UnitWidth, Constants.UnitHeight), Color.White);
-                    }
-                    else
-                    {
-                        spriteBatch.Draw(_textureWhite2DA50, new Rectangle(j * Constants.UnitWidth, i * Constants.UnitHeight, Constants.UnitWidth, Constants.UnitHeight), Color.White);
-                    }
-                }
+                renderer.DrawLight(spriteBatch, position);
             }
-            spriteBatch.Draw(_texture2D, position, _texture2D.Bounds, Color.White, 0, _texture2D.Bounds.Center.ToVector2(), 1, SpriteEffects.None, 0);
             spriteBatch.End();
             graphicsDevice.SetRenderTarget(null);
         }
