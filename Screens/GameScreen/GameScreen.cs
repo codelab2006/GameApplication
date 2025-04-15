@@ -6,8 +6,8 @@ namespace GameApplication
 {
     public class GameScreen(Game game) : Screen(game)
     {
-        private readonly Background _background = new();
-        private readonly World _world = new();
+        private readonly Background _background = new(Constants.ADayTime);
+        private readonly World _world = new(Constants.ADayTime);
         private Vector2 _position = Vector2.Zero;
         private Player? _player;
         private readonly Fog _fog = new();
@@ -32,6 +32,8 @@ namespace GameApplication
         {
             _fps.LoadContent();
 
+            _fog.LoadContent();
+
             _world.LoadContent();
             _fog.AddLightRenderer(nameof(World), _world);
 
@@ -51,6 +53,8 @@ namespace GameApplication
         {
             if (_player != null)
             {
+                _background.Update(gameTime);
+                _world.Update(gameTime);
                 _player.Update(gameTime);
                 _position = _player.Position;
                 Global.Camera.LookAt(_position);

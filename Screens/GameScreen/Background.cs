@@ -8,10 +8,21 @@ namespace GameApplication
         private readonly RenderTarget2D _renderTarget2D;
         private readonly Texture2D _texture2D = Global.GameGraphicsDevice.CreateTexture2D(1, 1);
 
-        public Background()
+        private readonly int _aDayTime;
+        private float _progress = 0f;
+
+        public Background(int aDayTime)
         {
+            _aDayTime = aDayTime;
             _renderTarget2D = Global.GameGraphicsDevice.CreateRenderTarget2D(Constants.VirtualWidth, Constants.VirtualHeight);
-            _texture2D.SetData([new Color(0, 0, 255, 255)]);
+            _texture2D.SetData([Color.Black]);
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            _progress += gameTime.GetElapsedSeconds() / _aDayTime;
+            if (_progress > 1f) _progress -= 1f;
+            _texture2D.SetData([DayNightCycle.GetBackgroundColor(_progress)]);
         }
 
         public void DrawTarget(SpriteBatch spriteBatch)

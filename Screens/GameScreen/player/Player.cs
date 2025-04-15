@@ -31,7 +31,7 @@ namespace GameApplication
 
         private MouseState _previousMouseState;
 
-        private readonly Texture2D _lightTexture2D = CircleLight.NewInstance(256, Color.White);
+        private readonly Texture2D _lightTexture2D = CircleLight.NewInstance(160, Color.White);
 
         public Player() : base(null, new(0, 0, Constants.PlayerWidth, Constants.PlayerHeight))
         {

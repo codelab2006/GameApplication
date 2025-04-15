@@ -39,6 +39,8 @@ namespace GameApplication
 
         public static readonly Vector2 GravityAcceleration = Vector2.Zero;
 
+        public static readonly int ADayTime = 30;
+
         static Constants()
         {
             GravityAcceleration = new Vector2(0, 8f);

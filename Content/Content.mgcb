@@ -104,6 +104,12 @@
 /processorParam:TextureFormat=Color
 /build:player/player-leg-right.png
 
+#begin shaders/ToneMappingShader.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:shaders/ToneMappingShader.fx
+
 #begin t.png
 /importer:TextureImporter
 /processor:TextureProcessor

@@ -22,6 +22,7 @@ namespace GameApplication
                     float distance = Vector2.Distance(position, center);
                     float alpha = MathHelper.Clamp(1f - (distance / maxDistance), 0f, 1f);
                     alpha *= alpha;
+                    alpha *= 0.92f;
 
                     colorData[y * size + x] = lightColor * alpha;
                 }
@@ -31,7 +32,7 @@ namespace GameApplication
         }
     }
 
-    public class RectLight
+    public class RectangleLight
     {
         public static Texture2D NewInstance(int width, int height, Color lightColor, bool horizontalFade = true, bool verticalFade = true)
         {
@@ -49,6 +50,7 @@ namespace GameApplication
                     float distance = MathF.Max(dx, dy);
                     float alpha = MathHelper.Clamp(1f - distance, 0f, 1f);
                     alpha *= alpha;
+                    alpha *= 0.92f;
                     colorData[y * width + x] = lightColor * alpha;
                 }
             }
@@ -76,6 +78,7 @@ namespace GameApplication
                     float distance = (dx + dy) / maxDistance;
                     float alpha = MathHelper.Clamp(1f - distance, 0f, 1f);
                     alpha *= alpha;
+                    alpha *= 0.92f;
                     colorData[y * width + x] = lightColor * alpha;
                 }
             }
