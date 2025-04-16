@@ -18,7 +18,7 @@ namespace GameApplication
 
         private readonly Texture2D _texture2DWhite = Global.GameGraphicsDevice.CreateTexture2D(1, 1);
         private readonly Texture2D _texture2DWhiteA050 = Global.GameGraphicsDevice.CreateTexture2D(1, 1);
-        private readonly Texture2D _texture2DWhiteA0 = Global.GameGraphicsDevice.CreateTexture2D(1, 1, [Color.White * 0f]);
+        private readonly Texture2D _texture2DWhiteA0 = Global.GameGraphicsDevice.CreateTexture2D(1, 1, [Color.Transparent]);
 
         public void Initialize()
         {
@@ -30,16 +30,6 @@ namespace GameApplication
                     Units[i, j] = new Unit(UnitFG.DIRT);
                 }
             }
-
-
-            Units[Units.GetLength(0) / 2 + 4, Units.GetLength(1) / 2] = new Unit(UnitFG.DIRT);
-
-            Units[Units.GetLength(0) / 2 + 4, Units.GetLength(1) / 2 + 1] = new Unit(UnitFG.DIRT);
-            Units[Units.GetLength(0) / 2 + 3, Units.GetLength(1) / 2 + 1] = new Unit(UnitFG.DIRT);
-
-            Units[Units.GetLength(0) / 2 + 4, Units.GetLength(1) / 2 + 2] = new Unit(UnitFG.DIRT);
-            Units[Units.GetLength(0) / 2 + 3, Units.GetLength(1) / 2 + 2] = new Unit(UnitFG.DIRT);
-            Units[Units.GetLength(0) / 2 + 2, Units.GetLength(1) / 2 + 2] = new Unit(UnitFG.DIRT);
 
             Width = Units.GetLength(1) * Constants.UnitWidth;
             Height = Units.GetLength(0) * Constants.UnitHeight;
@@ -62,8 +52,8 @@ namespace GameApplication
             _progress += gameTime.GetElapsedSeconds() / _aDayTime;
             if (_progress > 1f) _progress -= 1f;
             var brightness = DayNightCycle.GetBrightnessAlpha(_progress);
-            _texture2DWhite.SetData([Color.White * brightness]);
-            _texture2DWhiteA050.SetData([Color.White * MathF.Min(0.50f, brightness)]);
+            _texture2DWhite.SetData([new Color(255, 255, 255, brightness)]);
+            _texture2DWhiteA050.SetData([new Color(255, 255, 255, MathF.Min(0.50f, brightness))]);
         }
 
         public void Draw(SpriteBatch spriteBatch, Vector2 position)
