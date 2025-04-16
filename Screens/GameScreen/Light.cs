@@ -7,13 +7,14 @@ namespace GameApplication
 {
     public class CircleLight
     {
-        public static Texture2D NewInstance(int radius, Color lightColor, float falloff = 2.0f)
+        public static Texture2D NewInstance(int radius, Color lightColor, float falloff = 2.0f, float maxBrightness = 0.92f)
         {
             int size = radius * 2;
             var texture = Global.GameGraphicsDevice.CreateTexture2D(size, size);
             Color[] colorData = new Color[size * size];
             Vector2 center = new(radius, radius);
             float maxDistanceSquared = radius * radius;
+            maxBrightness = MathHelper.Clamp(maxBrightness, 0f, 1f);
             for (int y = 0; y < size; y++)
             {
                 for (int x = 0; x < size; x++)
@@ -21,7 +22,7 @@ namespace GameApplication
                     Vector2 pos = new(x, y);
                     float distSq = Vector2.DistanceSquared(pos, center);
                     float normalized = MathHelper.Clamp(1f - distSq / maxDistanceSquared, 0f, 1f);
-                    float alpha = MathF.Pow(normalized, falloff);
+                    float alpha = MathF.Pow(normalized, falloff) * maxBrightness;
                     byte a = (byte)(alpha * lightColor.A);
                     byte r = (byte)(alpha * lightColor.R);
                     byte g = (byte)(alpha * lightColor.G);
@@ -36,7 +37,7 @@ namespace GameApplication
 
     public class RectangleLight
     {
-        public static Texture2D NewInstance(int width, int height, Color lightColor, float falloff = 2.0f)
+        public static Texture2D NewInstance(int width, int height, Color lightColor, float falloff = 2.0f, float maxBrightness = 0.92f)
         {
             var texture = Global.GameGraphicsDevice.CreateTexture2D(width, height);
             Color[] colorData = new Color[width * height];
@@ -44,6 +45,7 @@ namespace GameApplication
             float halfHeight = height / 2f;
             float invHalfWidth = 1f / halfWidth;
             float invHalfHeight = 1f / halfHeight;
+            maxBrightness = MathHelper.Clamp(maxBrightness, 0f, 1f);
             for (int y = 0; y < height; y++)
             {
                 float dy = Math.Abs(y - halfHeight) * invHalfHeight;
@@ -56,7 +58,7 @@ namespace GameApplication
                         colorData[y * width + x] = Color.Transparent;
                         continue;
                     }
-                    float alphaFactor = MathF.Pow(normalized, falloff);
+                    float alphaFactor = MathF.Pow(normalized, falloff) * maxBrightness;
                     colorData[y * width + x] = new Color(
                         (byte)(alphaFactor * lightColor.R),
                         (byte)(alphaFactor * lightColor.G),
@@ -72,7 +74,7 @@ namespace GameApplication
 
     public class DiamondLight
     {
-        public static Texture2D NewInstance(int width, int height, Color lightColor, float falloff = 2.0f)
+        public static Texture2D NewInstance(int width, int height, Color lightColor, float falloff = 2.0f, float maxBrightness = 0.92f)
         {
             var texture = Global.GameGraphicsDevice.CreateTexture2D(width, height);
             Color[] colorData = new Color[width * height];
@@ -80,6 +82,7 @@ namespace GameApplication
             float halfHeight = height / 2f;
             float invHalfWidth = 1f / halfWidth;
             float invHalfHeight = 1f / halfHeight;
+            maxBrightness = MathHelper.Clamp(maxBrightness, 0f, 1f);
             for (int y = 0; y < height; y++)
             {
                 float dy = Math.Abs(y - halfHeight) * invHalfHeight;
@@ -92,7 +95,7 @@ namespace GameApplication
                         colorData[y * width + x] = Color.Transparent;
                         continue;
                     }
-                    float alphaFactor = MathF.Pow(normalized, falloff);
+                    float alphaFactor = MathF.Pow(normalized, falloff) * maxBrightness;
                     colorData[y * width + x] = new Color(
                         (byte)(alphaFactor * lightColor.R),
                         (byte)(alphaFactor * lightColor.G),
