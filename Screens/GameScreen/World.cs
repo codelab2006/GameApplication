@@ -18,12 +18,11 @@ namespace GameApplication
 
         private readonly Texture2D _texture2DWhite = Global.GameGraphicsDevice.CreateTexture2D(1, 1);
         private readonly Texture2D _texture2DWhiteA050 = Global.GameGraphicsDevice.CreateTexture2D(1, 1);
-        private readonly Texture2D _texture2DWhiteA0 = Global.GameGraphicsDevice.CreateTexture2D(1, 1, [Color.Transparent]);
 
         public void Initialize()
         {
             Units = new Unit[Constants.WorldVCount, Constants.WorldHCount];
-            for (int i = Units.GetLength(0) / 2 + 5; i != Units.GetLength(0); i++)
+            for (int i = Units.GetLength(0) / 3; i != Units.GetLength(0); i++)
             {
                 for (int j = 0; j != Units.GetLength(1); j++)
                 {

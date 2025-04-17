@@ -21,7 +21,7 @@ namespace GameApplication
             Global.World = _world;
 
             // _position = new Vector2(Constants.PlayerWidth / 2 + Constants.UnitWidth * 1, _world.Height / 3);
-            _position = new Vector2(_world.Width / 2, _world.Height / 3);
+            _position = new Vector2(_world.Width / 2, _world.Height / 4);
 
             Console.WriteLine($"Initialization Position: {_position}");
 
