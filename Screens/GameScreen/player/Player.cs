@@ -86,7 +86,7 @@ namespace GameApplication
                 {
                     if (currentMouseState.LeftButton == ButtonState.Pressed &&
                         _previousMouseState.LeftButton == ButtonState.Released)
-                        Global.World.SetUnitAt(vi, hi, new Unit(UnitFG.DIRT));
+                        Global.World.SetUnitAt(vi, hi, new Unit(UnitFG.DIRT, vi, hi));
 
                     if (currentMouseState.RightButton == ButtonState.Pressed &&
                         _previousMouseState.RightButton == ButtonState.Released)

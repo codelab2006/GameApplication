@@ -41,6 +41,8 @@ namespace GameApplication
 
         public static readonly int ADayTime = 30;
 
+        public static readonly float FGIntensityDecay = 0.2f;
+
         static Constants()
         {
             GravityAcceleration = new Vector2(0, 8f);
