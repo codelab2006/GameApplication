@@ -69,7 +69,7 @@ namespace GameApplication
                             if (!uRectangle.Intersects(stepVCollisionRectangle)) continue;
                             if (uRectangle.Center.Y > stepVCollisionRectangle.Center.Y)
                             {
-                                newPositionY = newPositionY.HasValue ? MathF.Min(newPositionY.Value, uRectangle.Top - (float)rectHeight / 2) : uRectangle.Top - (float)rectHeight / 2;
+                                newPositionY = newPositionY.HasValue ? MathHelper.Min(newPositionY.Value, uRectangle.Top - (float)rectHeight / 2) : uRectangle.Top - (float)rectHeight / 2;
                                 bCollision = true;
                             }
                         }
@@ -85,7 +85,7 @@ namespace GameApplication
                             if (!uRectangle.Intersects(stepVCollisionRectangle)) continue;
                             if (uRectangle.Center.Y < stepVCollisionRectangle.Center.Y)
                             {
-                                newPositionY = newPositionY.HasValue ? MathF.Max(newPositionY.Value, uRectangle.Bottom + (float)rectHeight / 2) : uRectangle.Bottom + (float)rectHeight / 2;
+                                newPositionY = newPositionY.HasValue ? MathHelper.Max(newPositionY.Value, uRectangle.Bottom + (float)rectHeight / 2) : uRectangle.Bottom + (float)rectHeight / 2;
                                 tCollision = true;
                             }
                         }

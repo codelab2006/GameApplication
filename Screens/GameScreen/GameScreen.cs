@@ -1,6 +1,7 @@
 using System;
 
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace GameApplication
 {
@@ -73,7 +74,7 @@ namespace GameApplication
 
                 Global.GameGraphicsDevice.Clear(Color.Black);
                 _background.Draw(_spriteBatch);
-                _spriteBatch.Begin(transformMatrix: Global.Camera.GetViewMatrix());
+                _spriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: Global.Camera.GetViewMatrix());
                 _world.Draw(_spriteBatch, _position);
                 // _world.Draw(_spriteBatch, _position, Global.GetTargetPeripheralUnitsRange(_player.RectangleF.Center, _player.RectangleF.Width, _player.RectangleF.Height, Constants.CollisionMargin, Constants.UnitHeight, Constants.UnitWidth, Constants.WorldVCount, Constants.WorldHCount));
                 _player?.Draw(_spriteBatch);

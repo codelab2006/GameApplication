@@ -7,13 +7,13 @@ namespace GameApplication
         public const int VirtualWidth = 1920;
         public const int VirtualHeight = 1080;
 
-        public const int UnitWidth = 16;
-        public const int UnitHeight = 16;
+        public const int UnitWidth = 20;
+        public const int UnitHeight = 20;
 
         public const int WorldHCount = 200; // 8400;
         public const int WorldVCount = 200; // 2400;
 
-        public const int CollisionMargin = 16;
+        public const int CollisionMargin = 20;
 
         public const int CollisionStep = 4;
 
@@ -42,6 +42,8 @@ namespace GameApplication
         public static readonly int ADayTime = 30;
 
         public static readonly float FGIntensityDecay = 0.2f;
+
+        public static readonly bool ShowPlayer = false;
 
         static Constants()
         {

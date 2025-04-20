@@ -53,11 +53,11 @@ namespace GameApplication
             }
         }
 
-        private void InitializeFGIntensity(int i, int j)
+        private Unit? InitializeFGIntensity(int i, int j)
         {
-            if (i < 0 || i >= Units.GetLength(0) || j < 0 || j >= Units.GetLength(1)) return;
+            if (i < 0 || i >= Units.GetLength(0) || j < 0 || j >= Units.GetLength(1)) return null;
             var unit = Units[i, j];
-            if (unit == null) return;
+            if (unit == null) return null;
 
             bool hasNullNeighbor =
                 (i > 0 && Units[i - 1, j] == null) ||
@@ -69,6 +69,7 @@ namespace GameApplication
             {
                 unit.FGIntensity = 1;
             }
+            return unit;
         }
 
         private void FloodFillWorldFGIntensity()
@@ -88,7 +89,7 @@ namespace GameApplication
         {
             if (i < 0 || i >= Units.GetLength(0) || j < 0 || j >= Units.GetLength(1)) return;
             var unit = Units[i, j];
-            if (unit != null && unit.FGIntensity == 1)
+            if (unit != null && unit.FGIntensity > 0)
             {
                 Queue<Unit> queue = new();
                 queue.Enqueue(unit);
@@ -132,25 +133,51 @@ namespace GameApplication
 
             if (unit != null)
             {
-
+                FloodFillFGIntensityWhenFGAdded(unit);
             }
             else
             {
-                int[] dy = [-1, 1, 0, 0];
-                int[] dx = [0, 0, -1, 1];
-                for (int d = 0; d < 4; d++)
-                {
-                    int ni = vi + dy[d];
-                    int nj = hi + dx[d];
-                    InitializeFGIntensity(ni, nj);
-                }
+                FloodFillFGIntensityWhenFGRemoved(vi, hi);
+            }
+        }
 
-                for (int d = 0; d < 4; d++)
+        private void FloodFillFGIntensityWhenFGAdded(Unit unit)
+        {
+            int iStart = MathHelper.Max(unit.Vi - 10, 0);
+            int iEnd = MathHelper.Min(unit.Vi + 10, Units.GetLength(0));
+            int jStart = MathHelper.Max(unit.Hi - 10, 0);
+            int jEnd = MathHelper.Min(unit.Hi + 10, Units.GetLength(1));
+            for (int i = iStart; i < iEnd; i++)
+                for (int j = jStart; j < jEnd; j++)
                 {
-                    int ni = vi + dy[d];
-                    int nj = hi + dx[d];
-                    FloodFillFGIntensity(ni, nj);
+                    var u = Units[i, j];
+                    if (u != null) u.FGIntensity = 0;
                 }
+            for (int i = iStart; i < iEnd; i++)
+                for (int j = jStart; j < jEnd; j++)
+                    InitializeFGIntensity(i, j);
+
+            for (int i = MathHelper.Max(unit.Vi - 20, 0); i < MathHelper.Min(unit.Vi + 20, Units.GetLength(0)); i++)
+                for (int j = MathHelper.Max(unit.Hi - 20, 0); j < MathHelper.Min(unit.Hi + 20, Units.GetLength(1)); j++)
+                    FloodFillFGIntensity(i, j);
+        }
+
+        private void FloodFillFGIntensityWhenFGRemoved(int vi, int hi)
+        {
+            int[] dy = [-1, 1, 0, 0];
+            int[] dx = [0, 0, -1, 1];
+            for (int d = 0; d < 4; d++)
+            {
+                int ni = vi + dy[d];
+                int nj = hi + dx[d];
+                InitializeFGIntensity(ni, nj);
+            }
+
+            for (int d = 0; d < 4; d++)
+            {
+                int ni = vi + dy[d];
+                int nj = hi + dx[d];
+                FloodFillFGIntensity(ni, nj);
             }
         }
 
@@ -212,7 +239,7 @@ namespace GameApplication
                         spriteBatch.Draw(
                             _texture2DWhite,
                             new Rectangle(j * Constants.UnitWidth, i * Constants.UnitHeight, Constants.UnitWidth, Constants.UnitHeight),
-                            Color.White * MathF.Min(_brightness, unit.FGIntensity));
+                            Color.White * MathHelper.Min(_brightness, unit.FGIntensity));
                     }
                 }
             }

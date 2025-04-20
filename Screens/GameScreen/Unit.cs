@@ -3,6 +3,8 @@ namespace GameApplication
     public enum UnitBG
     {
         NONE = 0,
+        WOOD = 1,
+        STONE = 2,
     }
 
     public enum UnitFG

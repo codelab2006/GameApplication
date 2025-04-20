@@ -48,11 +48,11 @@ namespace GameApplication
             maxBrightness = MathHelper.Clamp(maxBrightness, 0f, 1f);
             for (int y = 0; y < height; y++)
             {
-                float dy = Math.Abs(y - halfHeight) * invHalfHeight;
+                float dy = MathF.Abs(y - halfHeight) * invHalfHeight;
                 for (int x = 0; x < width; x++)
                 {
-                    float dx = Math.Abs(x - halfWidth) * invHalfWidth;
-                    float normalized = 1f - Math.Max(dx, dy);
+                    float dx = MathF.Abs(x - halfWidth) * invHalfWidth;
+                    float normalized = 1f - MathHelper.Max(dx, dy);
                     if (normalized <= 0f)
                     {
                         colorData[y * width + x] = Color.Transparent;
@@ -85,10 +85,10 @@ namespace GameApplication
             maxBrightness = MathHelper.Clamp(maxBrightness, 0f, 1f);
             for (int y = 0; y < height; y++)
             {
-                float dy = Math.Abs(y - halfHeight) * invHalfHeight;
+                float dy = MathF.Abs(y - halfHeight) * invHalfHeight;
                 for (int x = 0; x < width; x++)
                 {
-                    float dx = Math.Abs(x - halfWidth) * invHalfWidth;
+                    float dx = MathF.Abs(x - halfWidth) * invHalfWidth;
                     float normalized = 1f - (dx + dy);
                     if (normalized <= 0f)
                     {

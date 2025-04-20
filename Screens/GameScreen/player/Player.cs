@@ -179,6 +179,7 @@ namespace GameApplication
 
         public void DrawTarget(SpriteBatch spriteBatch)
         {
+            if (!Constants.ShowPlayer) return;
             var graphicsDevice = Global.GameGraphicsDevice;
             graphicsDevice.SetRenderTarget(_renderTarget2D);
             graphicsDevice.Clear(Color.Transparent);
