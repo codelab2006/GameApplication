@@ -44,14 +44,13 @@ namespace GameApplication
 
             Console.WriteLine($"World Width: {Width}, Height: {Height}");
 
-            InitializeWorldFGIntensity();
-            FloodFillWorldFGIntensity();
+            InitializeWorldIntensity();
 
-            InitializeWorldBGIntensity();
             FloodFillWorldBGIntensity();
+            FloodFillWorldFGIntensity();
         }
 
-        private void InitializeWorldFGIntensity()
+        private void InitializeWorldIntensity()
         {
             int worldVCount = Units.GetLength(0);
             int worldHCount = Units.GetLength(1);
@@ -59,110 +58,19 @@ namespace GameApplication
             {
                 for (int j = 0; j < worldHCount; j++)
                 {
-                    InitializeFGIntensity(i, j);
-                }
-            }
-        }
+                    var unit = Units[i, j];
+                    if (unit == null) continue;
 
-        private void InitializeFGIntensity(int i, int j)
-        {
-            if (i < 0 || i >= Units.GetLength(0) || j < 0 || j >= Units.GetLength(1)) return;
-            var unit = Units[i, j];
-            if (unit == null) return;
-
-            bool hasNullNeighbor =
-                (i > 0 && Units[i - 1, j] == null) ||
-                (i < Units.GetLength(0) - 1 && Units[i + 1, j] == null) ||
-                (j > 0 && Units[i, j - 1] == null) ||
-                (j < Units.GetLength(1) - 1 && Units[i, j + 1] == null);
-
-            if (hasNullNeighbor)
-            {
-                unit.FGIntensity = 1;
-            }
-            return;
-        }
-
-        private void FloodFillWorldFGIntensity()
-        {
-            int worldVCount = Units.GetLength(0);
-            int worldHCount = Units.GetLength(1);
-            for (int i = 0; i < worldVCount; i++)
-            {
-                for (int j = 0; j < worldHCount; j++)
-                {
-                    FloodFillFGIntensity(i, j);
-                }
-            }
-        }
-
-        private void FloodFillFGIntensity(int i, int j)
-        {
-            if (i < 0 || i >= Units.GetLength(0) || j < 0 || j >= Units.GetLength(1)) return;
-            var unit = Units[i, j];
-            if (unit != null && unit.FGIntensity > 0)
-            {
-                Queue<Unit> queue = new();
-                queue.Enqueue(unit);
-                int[] dy = [-1, 1, 0, 0, -1, -1, 1, 1];
-                int[] dx = [0, 0, -1, 1, -1, 1, -1, 1];
-                int worldVCount = Units.GetLength(0);
-                int worldHCount = Units.GetLength(1);
-                while (queue.Count > 0)
-                {
-                    var u = queue.Dequeue();
-                    for (int d = 0; d < 8; d++)
+                    if ((i > 0 && Units[i - 1, j] == null) ||
+                        (i < Units.GetLength(0) - 1 && Units[i + 1, j] == null) ||
+                        (j > 0 && Units[i, j - 1] == null) ||
+                        (j < Units.GetLength(1) - 1 && Units[i, j + 1] == null))
                     {
-                        int ni = u.Vi + dy[d];
-                        int nj = u.Hi + dx[d];
-                        float nextIntensity = u.FGIntensity - Constants.FGIntensityDecay;
-                        if (ni >= 0 && ni < worldVCount && nj >= 0 && nj < worldHCount && nextIntensity > 0)
-                        {
-                            var neighbor = Units[ni, nj];
-                            if (neighbor != null)
-                            {
-                                if (neighbor.FGIntensity < nextIntensity)
-                                {
-                                    neighbor.FGIntensity = nextIntensity;
-                                    queue.Enqueue(neighbor);
-                                }
-                            }
-                        }
+                        unit.BGIntensity = 1;
+                        unit.FGIntensity = 1;
                     }
                 }
             }
-        }
-
-        private void InitializeWorldBGIntensity()
-        {
-            int worldVCount = Units.GetLength(0);
-            int worldHCount = Units.GetLength(1);
-            for (int i = 0; i < worldVCount; i++)
-            {
-                for (int j = 0; j < worldHCount; j++)
-                {
-                    InitializeBGIntensity(i, j);
-                }
-            }
-        }
-
-        private void InitializeBGIntensity(int i, int j)
-        {
-            if (i < 0 || i >= Units.GetLength(0) || j < 0 || j >= Units.GetLength(1)) return;
-            var unit = Units[i, j];
-            if (unit == null) return;
-
-            bool hasNullNeighbor =
-                (i > 0 && Units[i - 1, j] == null) ||
-                (i < Units.GetLength(0) - 1 && Units[i + 1, j] == null) ||
-                (j > 0 && Units[i, j - 1] == null) ||
-                (j < Units.GetLength(1) - 1 && Units[i, j + 1] == null);
-
-            if (hasNullNeighbor)
-            {
-                unit.BGIntensity = 1;
-            }
-            return;
         }
 
         private void FloodFillWorldBGIntensity()
@@ -206,6 +114,56 @@ namespace GameApplication
                                 if (neighbor.BGIntensity < nextIntensity)
                                 {
                                     neighbor.BGIntensity = nextIntensity;
+                                    queue.Enqueue(neighbor);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void FloodFillWorldFGIntensity()
+        {
+            int worldVCount = Units.GetLength(0);
+            int worldHCount = Units.GetLength(1);
+            for (int i = 0; i < worldVCount; i++)
+            {
+                for (int j = 0; j < worldHCount; j++)
+                {
+                    FloodFillFGIntensity(i, j);
+                }
+            }
+        }
+
+        private void FloodFillFGIntensity(int i, int j)
+        {
+            if (i < 0 || i >= Units.GetLength(0) || j < 0 || j >= Units.GetLength(1)) return;
+            var unit = Units[i, j];
+            if (unit != null && unit.FGIntensity > 0)
+            {
+                Queue<Unit> queue = new();
+                queue.Enqueue(unit);
+                int[] dy = [-1, 1, 0, 0, -1, -1, 1, 1];
+                int[] dx = [0, 0, -1, 1, -1, 1, -1, 1];
+                int worldVCount = Units.GetLength(0);
+                int worldHCount = Units.GetLength(1);
+                while (queue.Count > 0)
+                {
+                    var u = queue.Dequeue();
+                    for (int d = 0; d < 8; d++)
+                    {
+                        int ni = u.Vi + dy[d];
+                        int nj = u.Hi + dx[d];
+                        float nextIntensity = u.FGIntensity - Constants.FGIntensityDecay;
+                        if (ni >= 0 && ni < worldVCount && nj >= 0 && nj < worldHCount && nextIntensity > 0)
+                        {
+                            var neighbor = Units[ni, nj];
+                            if (neighbor != null)
+                            {
+                                if (neighbor.FGIntensity < nextIntensity)
+                                {
+                                    neighbor.FGIntensity = nextIntensity;
                                     queue.Enqueue(neighbor);
                                 }
                             }
@@ -315,6 +273,44 @@ namespace GameApplication
                 int nj = hi + dx[d];
                 FloodFillBGIntensity(ni, nj);
             }
+        }
+
+        private void InitializeBGIntensity(int i, int j)
+        {
+            if (i < 0 || i >= Units.GetLength(0) || j < 0 || j >= Units.GetLength(1)) return;
+            var unit = Units[i, j];
+            if (unit == null) return;
+
+            bool hasNullNeighbor =
+                (i > 0 && Units[i - 1, j] == null) ||
+                (i < Units.GetLength(0) - 1 && Units[i + 1, j] == null) ||
+                (j > 0 && Units[i, j - 1] == null) ||
+                (j < Units.GetLength(1) - 1 && Units[i, j + 1] == null);
+
+            if (hasNullNeighbor)
+            {
+                unit.BGIntensity = 1;
+            }
+            return;
+        }
+
+        private void InitializeFGIntensity(int i, int j)
+        {
+            if (i < 0 || i >= Units.GetLength(0) || j < 0 || j >= Units.GetLength(1)) return;
+            var unit = Units[i, j];
+            if (unit == null) return;
+
+            bool hasNullNeighbor =
+                (i > 0 && Units[i - 1, j] == null) ||
+                (i < Units.GetLength(0) - 1 && Units[i + 1, j] == null) ||
+                (j > 0 && Units[i, j - 1] == null) ||
+                (j < Units.GetLength(1) - 1 && Units[i, j + 1] == null);
+
+            if (hasNullNeighbor)
+            {
+                unit.FGIntensity = 1;
+            }
+            return;
         }
 
         public void Update(GameTime gameTime)
