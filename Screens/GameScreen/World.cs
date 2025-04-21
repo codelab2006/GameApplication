@@ -12,7 +12,8 @@ namespace GameApplication
         public int Width { get; private set; } = 0;
         public int Height { get; private set; } = 0;
 
-        private Texture2D? _texture2D;
+        private Texture2D? _texture2DBGUnits;
+        private Texture2D? _texture2DFGUnits;
 
         private readonly int _aDayTime = aDayTime;
         private float _progress = 0f;
@@ -23,6 +24,13 @@ namespace GameApplication
         public void Initialize()
         {
             Units = new Unit[Constants.WorldVCount, Constants.WorldHCount];
+            for (int i = Units.GetLength(0) / 4; i != Units.GetLength(0) / 3; i++)
+            {
+                for (int j = 0; j != Units.GetLength(1); j++)
+                {
+                    Units[i, j] = new Unit(UnitBG.WOOD, i, j);
+                }
+            }
             for (int i = Units.GetLength(0) / 3; i != Units.GetLength(0); i++)
             {
                 for (int j = 0; j != Units.GetLength(1); j++)
@@ -38,6 +46,9 @@ namespace GameApplication
 
             InitializeWorldFGIntensity();
             FloodFillWorldFGIntensity();
+
+            InitializeWorldBGIntensity();
+            FloodFillWorldBGIntensity();
         }
 
         private void InitializeWorldFGIntensity()
@@ -53,11 +64,11 @@ namespace GameApplication
             }
         }
 
-        private Unit? InitializeFGIntensity(int i, int j)
+        private void InitializeFGIntensity(int i, int j)
         {
-            if (i < 0 || i >= Units.GetLength(0) || j < 0 || j >= Units.GetLength(1)) return null;
+            if (i < 0 || i >= Units.GetLength(0) || j < 0 || j >= Units.GetLength(1)) return;
             var unit = Units[i, j];
-            if (unit == null) return null;
+            if (unit == null) return;
 
             bool hasNullNeighbor =
                 (i > 0 && Units[i - 1, j] == null) ||
@@ -69,7 +80,7 @@ namespace GameApplication
             {
                 unit.FGIntensity = 1;
             }
-            return unit;
+            return;
         }
 
         private void FloodFillWorldFGIntensity()
@@ -122,9 +133,92 @@ namespace GameApplication
             }
         }
 
+        private void InitializeWorldBGIntensity()
+        {
+            int worldVCount = Units.GetLength(0);
+            int worldHCount = Units.GetLength(1);
+            for (int i = 0; i < worldVCount; i++)
+            {
+                for (int j = 0; j < worldHCount; j++)
+                {
+                    InitializeBGIntensity(i, j);
+                }
+            }
+        }
+
+        private void InitializeBGIntensity(int i, int j)
+        {
+            if (i < 0 || i >= Units.GetLength(0) || j < 0 || j >= Units.GetLength(1)) return;
+            var unit = Units[i, j];
+            if (unit == null) return;
+
+            bool hasNullNeighbor =
+                (i > 0 && Units[i - 1, j] == null) ||
+                (i < Units.GetLength(0) - 1 && Units[i + 1, j] == null) ||
+                (j > 0 && Units[i, j - 1] == null) ||
+                (j < Units.GetLength(1) - 1 && Units[i, j + 1] == null);
+
+            if (hasNullNeighbor)
+            {
+                unit.BGIntensity = 1;
+            }
+            return;
+        }
+
+        private void FloodFillWorldBGIntensity()
+        {
+            int worldVCount = Units.GetLength(0);
+            int worldHCount = Units.GetLength(1);
+            for (int i = 0; i < worldVCount; i++)
+            {
+                for (int j = 0; j < worldHCount; j++)
+                {
+                    FloodFillBGIntensity(i, j);
+                }
+            }
+        }
+
+        private void FloodFillBGIntensity(int i, int j)
+        {
+            if (i < 0 || i >= Units.GetLength(0) || j < 0 || j >= Units.GetLength(1)) return;
+            var unit = Units[i, j];
+            if (unit != null && unit.BGIntensity > 0)
+            {
+                Queue<Unit> queue = new();
+                queue.Enqueue(unit);
+                int[] dy = [-1, 1, 0, 0, -1, -1, 1, 1];
+                int[] dx = [0, 0, -1, 1, -1, 1, -1, 1];
+                int worldVCount = Units.GetLength(0);
+                int worldHCount = Units.GetLength(1);
+                while (queue.Count > 0)
+                {
+                    var u = queue.Dequeue();
+                    for (int d = 0; d < 8; d++)
+                    {
+                        int ni = u.Vi + dy[d];
+                        int nj = u.Hi + dx[d];
+                        float nextIntensity = u.BGIntensity - Constants.BGIntensityDecay;
+                        if (ni >= 0 && ni < worldVCount && nj >= 0 && nj < worldHCount && nextIntensity > 0)
+                        {
+                            var neighbor = Units[ni, nj];
+                            if (neighbor != null)
+                            {
+                                if (neighbor.BGIntensity < nextIntensity)
+                                {
+                                    neighbor.BGIntensity = nextIntensity;
+                                    queue.Enqueue(neighbor);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         public void LoadContent()
         {
-            _texture2D = Global.Content.Load<Texture2D>("world-units");
+            _texture2DBGUnits = Global.Content.Load<Texture2D>("world-bg-units");
+            _texture2DFGUnits = Global.Content.Load<Texture2D>("world-fg-units");
         }
 
         public void SetUnitAt(int vi, int hi, Unit? unit)
@@ -134,10 +228,12 @@ namespace GameApplication
             if (unit != null)
             {
                 FloodFillFGIntensityWhenFGAdded(unit);
+                FloodFillBGIntensityWhenBGAdded(unit);
             }
             else
             {
                 FloodFillFGIntensityWhenFGRemoved(vi, hi);
+                FloodFillBGIntensityWhenBGRemoved(vi, hi);
             }
         }
 
@@ -162,6 +258,27 @@ namespace GameApplication
                     FloodFillFGIntensity(i, j);
         }
 
+        private void FloodFillBGIntensityWhenBGAdded(Unit unit)
+        {
+            int iStart = MathHelper.Max(unit.Vi - 10, 0);
+            int iEnd = MathHelper.Min(unit.Vi + 10, Units.GetLength(0));
+            int jStart = MathHelper.Max(unit.Hi - 10, 0);
+            int jEnd = MathHelper.Min(unit.Hi + 10, Units.GetLength(1));
+            for (int i = iStart; i < iEnd; i++)
+                for (int j = jStart; j < jEnd; j++)
+                {
+                    var u = Units[i, j];
+                    if (u != null) u.BGIntensity = 0;
+                }
+            for (int i = iStart; i < iEnd; i++)
+                for (int j = jStart; j < jEnd; j++)
+                    InitializeBGIntensity(i, j);
+
+            for (int i = MathHelper.Max(unit.Vi - 20, 0); i < MathHelper.Min(unit.Vi + 20, Units.GetLength(0)); i++)
+                for (int j = MathHelper.Max(unit.Hi - 20, 0); j < MathHelper.Min(unit.Hi + 20, Units.GetLength(1)); j++)
+                    FloodFillBGIntensity(i, j);
+        }
+
         private void FloodFillFGIntensityWhenFGRemoved(int vi, int hi)
         {
             int[] dy = [-1, 1, 0, 0];
@@ -181,6 +298,25 @@ namespace GameApplication
             }
         }
 
+        private void FloodFillBGIntensityWhenBGRemoved(int vi, int hi)
+        {
+            int[] dy = [-1, 1, 0, 0];
+            int[] dx = [0, 0, -1, 1];
+            for (int d = 0; d < 4; d++)
+            {
+                int ni = vi + dy[d];
+                int nj = hi + dx[d];
+                InitializeBGIntensity(ni, nj);
+            }
+
+            for (int d = 0; d < 4; d++)
+            {
+                int ni = vi + dy[d];
+                int nj = hi + dx[d];
+                FloodFillBGIntensity(ni, nj);
+            }
+        }
+
         public void Update(GameTime gameTime)
         {
             _progress += gameTime.GetElapsedSeconds() / _aDayTime;
@@ -196,9 +332,23 @@ namespace GameApplication
 
         public void Draw(SpriteBatch spriteBatch, Vector2 position, (int vTFrom, int vTTo, int vBFrom, int vBTo, int hLFrom, int hLTo, int hRFrom, int hRTo)? highlightRange)
         {
-            if (_texture2D == null) return;
+            if (_texture2DBGUnits == null || _texture2DFGUnits == null) return;
 
             var (vFrom, vTo, hFrom, hTo) = Global.GetTargetUnitsRange(position, Constants.VirtualWidth, Constants.VirtualHeight, Constants.UnitHeight, Constants.UnitWidth, Constants.WorldVCount, Constants.WorldHCount);
+
+            for (int i = vFrom; i < vTo; i++)
+            {
+                for (int j = hFrom; j < hTo; j++)
+                {
+                    var unit = Units[i, j];
+                    if (unit != null)
+                    {
+                        Color color = Color.White;
+                        spriteBatch.Draw(_texture2DBGUnits, new Vector2(j * Constants.UnitWidth, i * Constants.UnitHeight), new Rectangle((int)unit.BG * Constants.UnitWidth, 0, Constants.UnitWidth, Constants.UnitHeight), color, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+                    }
+                }
+            }
+
             for (int i = vFrom; i < vTo; i++)
             {
                 for (int j = hFrom; j < hTo; j++)
@@ -213,7 +363,7 @@ namespace GameApplication
                         )
                             color = Color.Blue;
 
-                        spriteBatch.Draw(_texture2D, new Vector2(j * Constants.UnitWidth, i * Constants.UnitHeight), new Rectangle((int)unit.FG * Constants.UnitWidth, 0, Constants.UnitWidth, Constants.UnitHeight), color, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+                        spriteBatch.Draw(_texture2DFGUnits, new Vector2(j * Constants.UnitWidth, i * Constants.UnitHeight), new Rectangle((int)unit.FG * Constants.UnitWidth, 0, Constants.UnitWidth, Constants.UnitHeight), color, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
                     }
                 }
             }
@@ -239,7 +389,7 @@ namespace GameApplication
                         spriteBatch.Draw(
                             _texture2DWhite,
                             new Rectangle(j * Constants.UnitWidth, i * Constants.UnitHeight, Constants.UnitWidth, Constants.UnitHeight),
-                            Color.White * MathHelper.Min(_brightness, unit.FGIntensity));
+                            Color.White * MathHelper.Min(_brightness, unit.FG != UnitFG.NONE ? unit.FGIntensity : unit.BG != UnitBG.NONE ? unit.BGIntensity : 1));
                     }
                 }
             }

@@ -43,7 +43,9 @@ namespace GameApplication
 
         public static readonly float FGIntensityDecay = 0.2f;
 
-        public static readonly bool ShowPlayer = false;
+        public static readonly float BGIntensityDecay = 0.1f;
+
+        public static readonly bool ShowPlayer = true;
 
         static Constants()
         {

@@ -122,7 +122,7 @@
 /processorParam:TextureFormat=Color
 /build:t.png
 
-#begin world-units.png
+#begin world-bg-units.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -132,7 +132,19 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:world-units.png
+/build:world-bg-units.png
+
+#begin world-fg-units.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:world-fg-units.png
 
 #begin xp.png
 /importer:TextureImporter

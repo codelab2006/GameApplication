@@ -22,6 +22,7 @@ namespace GameApplication
         public UnitBG BG { get; set; } = UnitBG.NONE;
         public bool IsStatic => FG != UnitFG.NONE;
         public float FGIntensity { get; set; } = 0;
+        public float BGIntensity { get; set; } = 0;
 
         public Unit(UnitFG unitFG, int vi, int hi)
         {
