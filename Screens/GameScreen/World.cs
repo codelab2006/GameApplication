@@ -139,13 +139,9 @@ namespace GameApplication
             Units[vi, hi] = unit;
 
             if (unit != null)
-            {
                 FloodFillIntensityWhenAdded(unit);
-            }
             else
-            {
                 FloodFillIntensityWhenRemoved(vi, hi);
-            }
         }
 
         private void FloodFillIntensityWhenAdded(Unit unit)

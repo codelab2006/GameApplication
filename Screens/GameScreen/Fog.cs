@@ -8,6 +8,7 @@ namespace GameApplication
     public class Fog
     {
         private readonly RenderTarget2D _renderTarget2D;
+        private Effect? _effect;
         private readonly BlendState _multiply = new()
         {
             ColorSourceBlend = Blend.Zero,
@@ -23,6 +24,11 @@ namespace GameApplication
         public Fog()
         {
             _renderTarget2D = Global.GameGraphicsDevice.CreateHDRRenderTarget2D(Constants.VirtualWidth, Constants.VirtualHeight);
+        }
+
+        public void LoadContent()
+        {
+            _effect = Global.Content.Load<Effect>("shaders/ToneMappingShader");
         }
 
         public void AddLightRenderer(string name, ILightRenderer lightRenderer)
@@ -51,7 +57,7 @@ namespace GameApplication
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Begin(blendState: _multiply);
+            spriteBatch.Begin(blendState: _multiply, effect: _effect);
             spriteBatch.Draw(_renderTarget2D, Vector2.Zero, Color.White);
             spriteBatch.End();
         }

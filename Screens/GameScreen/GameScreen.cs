@@ -33,6 +33,8 @@ namespace GameApplication
         {
             _fps.LoadContent();
 
+            _fog.LoadContent();
+
             _world.LoadContent();
             _fog.AddLightRenderer(nameof(World), _world);
 
