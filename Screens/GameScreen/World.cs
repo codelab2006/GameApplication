@@ -66,8 +66,8 @@ namespace GameApplication
                         (j > 0 && Units[i, j - 1] == null) ||
                         (j < Units.GetLength(1) - 1 && Units[i, j + 1] == null))
                     {
-                        unit.BGIntensity = 1;
-                        unit.FGIntensity = 1;
+                        if (unit.BG != UnitBG.NONE) unit.BGIntensity = 1;
+                        if (unit.FG != UnitFG.NONE) unit.FGIntensity = 1;
                     }
                 }
             }
@@ -88,16 +88,16 @@ namespace GameApplication
 
         private void FloodFillBGIntensity(int i, int j)
         {
-            if (i < 0 || i >= Units.GetLength(0) || j < 0 || j >= Units.GetLength(1)) return;
+            int worldVCount = Units.GetLength(0);
+            int worldHCount = Units.GetLength(1);
+            if (i < 0 || i >= worldVCount || j < 0 || j >= worldHCount) return;
             var unit = Units[i, j];
-            if (unit != null && unit.BGIntensity > 0)
+            if (unit != null && unit.BG != UnitBG.NONE && unit.BGIntensity > 0)
             {
                 Queue<Unit> queue = new();
                 queue.Enqueue(unit);
                 int[] dy = [-1, 1, 0, 0, -1, -1, 1, 1];
                 int[] dx = [0, 0, -1, 1, -1, 1, -1, 1];
-                int worldVCount = Units.GetLength(0);
-                int worldHCount = Units.GetLength(1);
                 while (queue.Count > 0)
                 {
                     var u = queue.Dequeue();
@@ -105,16 +105,20 @@ namespace GameApplication
                     {
                         int ni = u.Vi + dy[d];
                         int nj = u.Hi + dx[d];
-                        float nextIntensity = u.BGIntensity - Constants.BGIntensityDecay;
-                        if (ni >= 0 && ni < worldVCount && nj >= 0 && nj < worldHCount && nextIntensity > 0)
+                        if (ni >= 0 && ni < worldVCount && nj >= 0 && nj < worldHCount)
                         {
                             var neighbor = Units[ni, nj];
-                            if (neighbor != null)
+                            float nextIntensity = MathHelper.Max(u.BGIntensity - Constants.BGIntensityDecay, 0);
+                            if (nextIntensity >= 0)
                             {
-                                if (neighbor.BGIntensity < nextIntensity)
+                                if (neighbor != null && neighbor.BG != UnitBG.NONE)
                                 {
-                                    neighbor.BGIntensity = nextIntensity;
-                                    queue.Enqueue(neighbor);
+                                    if (neighbor.BGIntensity < nextIntensity)
+                                    {
+                                        neighbor.BGIntensity = nextIntensity;
+                                        if (nextIntensity > 0)
+                                            queue.Enqueue(neighbor);
+                                    }
                                 }
                             }
                         }
@@ -138,16 +142,16 @@ namespace GameApplication
 
         private void FloodFillFGIntensity(int i, int j)
         {
-            if (i < 0 || i >= Units.GetLength(0) || j < 0 || j >= Units.GetLength(1)) return;
+            int worldVCount = Units.GetLength(0);
+            int worldHCount = Units.GetLength(1);
+            if (i < 0 || i >= worldVCount || j < 0 || j >= worldHCount) return;
             var unit = Units[i, j];
-            if (unit != null && unit.FGIntensity > 0)
+            if (unit != null && unit.FG != UnitFG.NONE && unit.FGIntensity > 0)
             {
                 Queue<Unit> queue = new();
                 queue.Enqueue(unit);
                 int[] dy = [-1, 1, 0, 0, -1, -1, 1, 1];
                 int[] dx = [0, 0, -1, 1, -1, 1, -1, 1];
-                int worldVCount = Units.GetLength(0);
-                int worldHCount = Units.GetLength(1);
                 while (queue.Count > 0)
                 {
                     var u = queue.Dequeue();
@@ -155,16 +159,20 @@ namespace GameApplication
                     {
                         int ni = u.Vi + dy[d];
                         int nj = u.Hi + dx[d];
-                        float nextIntensity = u.FGIntensity - Constants.FGIntensityDecay;
-                        if (ni >= 0 && ni < worldVCount && nj >= 0 && nj < worldHCount && nextIntensity > 0)
+                        if (ni >= 0 && ni < worldVCount && nj >= 0 && nj < worldHCount)
                         {
                             var neighbor = Units[ni, nj];
-                            if (neighbor != null)
+                            float nextIntensity = MathHelper.Max(u.FGIntensity - Constants.FGIntensityDecay, 0);
+                            if (nextIntensity >= 0)
                             {
-                                if (neighbor.FGIntensity < nextIntensity)
+                                if (neighbor != null && neighbor.FG != UnitFG.NONE)
                                 {
-                                    neighbor.FGIntensity = nextIntensity;
-                                    queue.Enqueue(neighbor);
+                                    if (neighbor.FGIntensity < nextIntensity)
+                                    {
+                                        neighbor.FGIntensity = nextIntensity;
+                                        if (nextIntensity > 0)
+                                            queue.Enqueue(neighbor);
+                                    }
                                 }
                             }
                         }
@@ -197,22 +205,22 @@ namespace GameApplication
 
         private void FloodFillFGIntensityWhenFGAdded(Unit unit)
         {
-            int iStart = MathHelper.Max(unit.Vi - 10, 0);
-            int iEnd = MathHelper.Min(unit.Vi + 10, Units.GetLength(0));
-            int jStart = MathHelper.Max(unit.Hi - 10, 0);
-            int jEnd = MathHelper.Min(unit.Hi + 10, Units.GetLength(1));
+            int iStart = MathHelper.Max(unit.Vi - 5, 0);
+            int iEnd = MathHelper.Min(unit.Vi + 5, Units.GetLength(0));
+            int jStart = MathHelper.Max(unit.Hi - 5, 0);
+            int jEnd = MathHelper.Min(unit.Hi + 5, Units.GetLength(1));
             for (int i = iStart; i < iEnd; i++)
                 for (int j = jStart; j < jEnd; j++)
                 {
                     var u = Units[i, j];
-                    if (u != null) u.FGIntensity = 0;
+                    if (u != null && u.FG != UnitFG.NONE) u.FGIntensity = 0;
                 }
             for (int i = iStart; i < iEnd; i++)
                 for (int j = jStart; j < jEnd; j++)
                     InitializeFGIntensity(i, j);
 
-            for (int i = MathHelper.Max(unit.Vi - 20, 0); i < MathHelper.Min(unit.Vi + 20, Units.GetLength(0)); i++)
-                for (int j = MathHelper.Max(unit.Hi - 20, 0); j < MathHelper.Min(unit.Hi + 20, Units.GetLength(1)); j++)
+            for (int i = MathHelper.Max(unit.Vi - 10, 0); i < MathHelper.Min(unit.Vi + 10, Units.GetLength(0)); i++)
+                for (int j = MathHelper.Max(unit.Hi - 10, 0); j < MathHelper.Min(unit.Hi + 10, Units.GetLength(1)); j++)
                     FloodFillFGIntensity(i, j);
         }
 
@@ -226,7 +234,7 @@ namespace GameApplication
                 for (int j = jStart; j < jEnd; j++)
                 {
                     var u = Units[i, j];
-                    if (u != null) u.BGIntensity = 0;
+                    if (u != null && u.BG != UnitBG.NONE) u.BGIntensity = 0;
                 }
             for (int i = iStart; i < iEnd; i++)
                 for (int j = jStart; j < jEnd; j++)
@@ -279,7 +287,7 @@ namespace GameApplication
         {
             if (i < 0 || i >= Units.GetLength(0) || j < 0 || j >= Units.GetLength(1)) return;
             var unit = Units[i, j];
-            if (unit == null) return;
+            if (unit == null || unit.BG == UnitBG.NONE) return;
 
             bool hasNullNeighbor =
                 (i > 0 && Units[i - 1, j] == null) ||
@@ -298,7 +306,7 @@ namespace GameApplication
         {
             if (i < 0 || i >= Units.GetLength(0) || j < 0 || j >= Units.GetLength(1)) return;
             var unit = Units[i, j];
-            if (unit == null) return;
+            if (unit == null || unit.FG == UnitFG.NONE) return;
 
             bool hasNullNeighbor =
                 (i > 0 && Units[i - 1, j] == null) ||
