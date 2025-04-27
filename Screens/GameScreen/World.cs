@@ -24,13 +24,13 @@ namespace GameApplication
         public void Initialize()
         {
             Units = new Unit[Constants.WorldVCount, Constants.WorldHCount];
-            for (int i = Units.GetLength(0) / 4; i != Units.GetLength(0) / 3; i++)
-            {
-                for (int j = 0; j != Units.GetLength(1); j++)
-                {
-                    Units[i, j] = new Unit(UnitBG.WOOD, i, j);
-                }
-            }
+            // for (int i = Units.GetLength(0) / 4; i != Units.GetLength(0) / 3; i++)
+            // {
+            //     for (int j = 0; j != Units.GetLength(1); j++)
+            //     {
+            //         Units[i, j] = new Unit(UnitBG.WOOD, i, j);
+            //     }
+            // }
             for (int i = Units.GetLength(0) / 3; i != Units.GetLength(0); i++)
             {
                 for (int j = 0; j != Units.GetLength(1); j++)
@@ -86,9 +86,7 @@ namespace GameApplication
 
         private void FloodFillIntensity(int i, int j)
         {
-            int worldVCount = Units.GetLength(0);
-            int worldHCount = Units.GetLength(1);
-            if (i < 0 || i >= worldVCount || j < 0 || j >= worldHCount) return;
+            if (!IsValidUnit(i, j)) return;
             var unit = Units[i, j];
             if (unit != null && unit.IsG && unit.Intensity > 0)
             {
@@ -103,12 +101,12 @@ namespace GameApplication
                     {
                         int ni = u.Vi + dy[d];
                         int nj = u.Hi + dx[d];
-                        if (ni >= 0 && ni < worldVCount && nj >= 0 && nj < worldHCount)
+                        if (IsValidUnit(ni, nj))
                         {
                             var neighbor = Units[ni, nj];
                             if (neighbor != null)
                             {
-                                float nextIntensity = MathHelper.Max(u.Intensity - (u.FG != UnitFG.NONE ? Constants.FGIntensityDecay : Constants.BGIntensityDecay), 0);
+                                float nextIntensity = MathHelper.Max(u.LightDecay > neighbor.LightDecay ? u.Intensity / 2 : u.Intensity - u.LightDecay, 0);
                                 if (nextIntensity >= 0)
                                 {
                                     if (neighbor.IsG)
@@ -186,7 +184,7 @@ namespace GameApplication
 
         private void InitializeIntensity(int i, int j)
         {
-            if (i < 0 || i >= Units.GetLength(0) || j < 0 || j >= Units.GetLength(1)) return;
+            if (!IsValidUnit(i, j)) return;
             var unit = Units[i, j];
             if (unit == null || !unit.IsG) return;
 
@@ -229,7 +227,11 @@ namespace GameApplication
                     if (unit != null)
                     {
                         Color color = Color.White;
-                        spriteBatch.Draw(_texture2DBGUnits, new Vector2(j * Constants.UnitWidth, i * Constants.UnitHeight), new Rectangle((int)unit.BG * Constants.UnitWidth, 0, Constants.UnitWidth, Constants.UnitHeight), color, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+                        spriteBatch.Draw(
+                            _texture2DBGUnits,
+                            new Vector2(j * Constants.UnitWidth - Constants.BG_UNIT_PADDING, i * Constants.UnitHeight - Constants.BG_UNIT_PADDING),
+                            new Rectangle((int)unit.BG * (Constants.UnitWidth + Constants.BG_UNIT_PADDING * 2), 0, Constants.UnitWidth + Constants.BG_UNIT_PADDING * 2, Constants.UnitHeight + Constants.BG_UNIT_PADDING * 2),
+                            color, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
                     }
                 }
             }
@@ -278,6 +280,12 @@ namespace GameApplication
                     }
                 }
             }
+        }
+
+        private bool IsValidUnit(int i, int j)
+        {
+            return i >= 0 && i < Units.GetLength(0) &&
+                   j >= 0 && j < Units.GetLength(1);
         }
     }
 

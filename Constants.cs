@@ -10,6 +10,8 @@ namespace GameApplication
         public const int UnitWidth = 20;
         public const int UnitHeight = 20;
 
+        public const int BG_UNIT_PADDING = 6;
+
         public const int WorldHCount = 200; // 8400;
         public const int WorldVCount = 200; // 2400;
 
@@ -41,12 +43,7 @@ namespace GameApplication
 
         public static readonly int ADayTime = 30;
 
-        public static readonly float FGIntensityDecay = 0.2f;
-
-        public static readonly float BGIntensityDecay = 0.1f;
-
         public static readonly bool ShowPlayer = true;
-
         static Constants()
         {
             GravityAcceleration = new Vector2(0, 8f);

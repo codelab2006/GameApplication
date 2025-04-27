@@ -7,7 +7,7 @@ namespace GameApplication
 {
     public class CircleLight
     {
-        public static Texture2D NewInstance(int radius, Color lightColor, float falloff = 2.0f, float maxBrightness = 0.8f)
+        public static Texture2D NewInstance(int radius, Color lightColor, float falloff = 2.0f, float maxBrightness = 0.75f)
         {
             int size = radius * 2;
             var texture = Global.GameGraphicsDevice.CreateTexture2D(size, size);
@@ -37,7 +37,7 @@ namespace GameApplication
 
     public class RectangleLight
     {
-        public static Texture2D NewInstance(int width, int height, Color lightColor, float falloff = 2.0f, float maxBrightness = 0.8f)
+        public static Texture2D NewInstance(int width, int height, Color lightColor, float falloff = 2.0f, float maxBrightness = 0.75f)
         {
             var texture = Global.GameGraphicsDevice.CreateTexture2D(width, height);
             Color[] colorData = new Color[width * height];
@@ -74,7 +74,7 @@ namespace GameApplication
 
     public class DiamondLight
     {
-        public static Texture2D NewInstance(int width, int height, Color lightColor, float falloff = 2.0f, float maxBrightness = 0.8f)
+        public static Texture2D NewInstance(int width, int height, Color lightColor, float falloff = 2.0f, float maxBrightness = 0.75f)
         {
             var texture = Global.GameGraphicsDevice.CreateTexture2D(width, height);
             Color[] colorData = new Color[width * height];
