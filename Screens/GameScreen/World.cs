@@ -16,7 +16,7 @@ namespace GameApplication
         private Texture2D? _texture2DFGUnits;
 
         private readonly int _aDayTime = aDayTime;
-        private float _progress = 0f;
+        private float _progress = 0.25f;
         private float _brightness = 0f;
 
         private readonly Texture2D _texture2DWhite = Global.GameGraphicsDevice.CreateTexture2D(1, 1, [Color.White]);
@@ -65,7 +65,7 @@ namespace GameApplication
                         (j > 0 && Units[i, j - 1] == null) ||
                         (j < Units.GetLength(1) - 1 && Units[i, j + 1] == null))
                     {
-                        if (unit.IsG) unit.Intensity = 1;
+                        if (unit.IsG) unit.Intensity = 0.8f;
                     }
                 }
             }
@@ -106,15 +106,15 @@ namespace GameApplication
                             var neighbor = Units[ni, nj];
                             if (neighbor != null)
                             {
-                                float nextIntensity = MathHelper.Max(u.LightDecay > neighbor.LightDecay ? u.Intensity / 2 : u.Intensity - u.LightDecay, 0);
-                                if (nextIntensity >= 0)
+                                float nextIntensity = MathHelper.Max(u.Intensity * u.LightDecay, Constants.MinLightIntensity);
+                                if (nextIntensity >= Constants.MinLightIntensity)
                                 {
                                     if (neighbor.IsG)
                                     {
                                         if (neighbor.Intensity < nextIntensity)
                                         {
                                             neighbor.Intensity = nextIntensity;
-                                            if (nextIntensity > 0)
+                                            if (nextIntensity > Constants.MinLightIntensity)
                                                 queue.Enqueue(neighbor);
                                         }
                                     }
@@ -196,7 +196,7 @@ namespace GameApplication
 
             if (hasNullNeighbor)
             {
-                unit.Intensity = 1;
+                unit.Intensity = 0.8f;
             }
             return;
         }
@@ -205,7 +205,7 @@ namespace GameApplication
         {
             _progress += gameTime.GetElapsedSeconds() / _aDayTime;
             if (_progress > 1f) _progress -= 1f;
-            _brightness = DayNightCycle.GetBrightnessAlpha(_progress);
+            _brightness = Constants.RefreshBrightness ? DayNightCycle.GetBrightnessAlpha(_progress) : 1;
         }
 
         public void Draw(SpriteBatch spriteBatch, Vector2 position)

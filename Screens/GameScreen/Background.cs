@@ -9,7 +9,7 @@ namespace GameApplication
         private readonly Texture2D _texture2D = Global.GameGraphicsDevice.CreateTexture2D(1, 1);
 
         private readonly int _aDayTime;
-        private float _progress = 0f;
+        private float _progress = 0.25f;
 
         public Background(int aDayTime)
         {
@@ -38,7 +38,7 @@ namespace GameApplication
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Begin(transformMatrix: Global.ViewportAdapter.GetScaleMatrix());
+            spriteBatch.Begin(transformMatrix: Global.Camera.GetViewMatrix());
             spriteBatch.Draw(_renderTarget2D, Vector2.Zero, Color.White);
             spriteBatch.End();
         }

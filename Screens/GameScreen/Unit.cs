@@ -23,7 +23,7 @@ namespace GameApplication
         public bool IsG => BG != UnitBG.NONE || FG != UnitFG.NONE;
         public bool IsStatic => FG != UnitFG.NONE;
         public float Intensity { get; set; } = 0;
-        public float LightDecay => FG != UnitFG.NONE ? 0.25f : BG != UnitBG.NONE ? 0.1f : 0f;
+        public float LightDecay => FG != UnitFG.NONE ? 0.55f : BG != UnitBG.NONE ? 0.85f : 0f;
 
 
         public Unit(UnitFG unitFG, int vi, int hi)

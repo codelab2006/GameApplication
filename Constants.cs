@@ -41,9 +41,13 @@ namespace GameApplication
 
         public static readonly Vector2 GravityAcceleration = Vector2.Zero;
 
-        public static readonly int ADayTime = 30;
+        public static readonly int ADayTime = 60 * 24;
 
         public static readonly bool ShowPlayer = true;
+
+        public static readonly bool RefreshBrightness = true;
+
+        public static readonly float MinLightIntensity = 0.05f;
         static Constants()
         {
             GravityAcceleration = new Vector2(0, 8f);
