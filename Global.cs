@@ -38,7 +38,7 @@ namespace GameApplication
             if (normalizedV == Vector2.Zero || float.IsNaN(normalizedV.X) || float.IsNaN(normalizedV.Y)) return (currentPosition, tCollision, bCollision, lCollision, rCollision);
 
             var newPosition = Move(currentPosition, frameVelocity);
-            Vector2 stepVelocity = normalizedV * collisionStep * elapsedSeconds;
+            Vector2 stepVelocity = normalizedV * MathF.Max(collisionStep * elapsedSeconds, 0.5f);
             if (stepVelocity.LengthSquared() > frameVelocity.LengthSquared()) stepVelocity = frameVelocity;
 
             float? newPositionY = null, newPositionX = null;
@@ -55,7 +55,7 @@ namespace GameApplication
             );
             while (stepVelocity.LengthSquared() <= frameVelocity.LengthSquared())
             {
-                var stepVCollisionRectangle = getRectangle(Move(currentPosition, new(0, stepVelocity.Y + (stepVelocity.Y < 0 ? -1 : 0))));
+                var stepVCollisionRectangle = getRectangle(Move(currentPosition, new(0, stepVelocity.Y)));
                 if (!bCollision && !tCollision)
                 {
                     if (stepVelocity.Y > 0)
@@ -91,7 +91,7 @@ namespace GameApplication
                         }
                     }
                 }
-                var stepHCollisionRectangle = getRectangle(Move(currentPosition, new(stepVelocity.X + (stepVelocity.X < 0 ? -1 : 0), 0)));
+                var stepHCollisionRectangle = getRectangle(Move(currentPosition, new(stepVelocity.X, 0)));
                 if (!rCollision && !lCollision)
                 {
                     List<(int vi, int hi, RectangleF uRectangle)> collisionRectangles = [];
@@ -154,7 +154,6 @@ namespace GameApplication
                                 lCollision = true;
                             }
                         }
-
                     }
                     if (bCollision && collisionRectangles.Count == 1)
                     {
@@ -174,7 +173,8 @@ namespace GameApplication
                                     ref newPositionX,
                                     ref newPositionY,
                                     ref rCollision)) break;
-                            if (lCollision && TryAdjustPosition(
+                            if (lCollision &&
+                                TryAdjustPosition(
                                     direction: -1,
                                     lastCollisionRectangle,
                                     rectHeight,
@@ -194,10 +194,84 @@ namespace GameApplication
                 if (stepVelocity.LengthSquared() > frameVelocity.LengthSquared()) stepVelocity = frameVelocity;
             }
 
-            if (newPositionY != null) newPosition.Y = MathF.Floor((float)newPositionY);
-            if (newPositionX != null) newPosition.X = MathF.Floor((float)newPositionX);
+            if (!tCollision && !bCollision && !lCollision && !rCollision)
+            {
+                TryNewPosition(currentPosition, newPosition, getRectangle, unitHeight, unitWidth, totalVCount, totalHCount, units,
+                               ref lCollision,
+                               ref rCollision,
+                               ref newPositionX);
+                if (newPositionX != null) newPosition.X = (float)newPositionX;
+            }
+            else
+            {
+                if (newPositionY != null) newPosition.Y = (float)newPositionY;
+                if (newPositionX != null) newPosition.X = (float)newPositionX;
+            }
 
             return (newPosition, tCollision, bCollision, lCollision, rCollision);
+        }
+
+        private static void TryNewPosition(
+            Vector2 currentPosition,
+            Vector2 newPosition,
+            Func<Vector2, RectangleF> getRectangle,
+            int unitHeight,
+            int unitWidth,
+            int totalVCount,
+            int totalHCount,
+            IUnit?[,] units,
+            ref bool lcollisionFlag,
+            ref bool rcollisionFlag,
+            ref float? newPositionX)
+        {
+            var rectangle = getRectangle(newPosition);
+            float rectWidth = rectangle.Width, rectHeight = rectangle.Height;
+            var (vFrom, vTo, hFrom, hTo) = GetTargetUnitsRange(rectangle.Center,
+                rectWidth,
+                rectHeight,
+                unitHeight,
+                unitWidth,
+                totalVCount,
+                totalHCount
+            );
+            var xOffset = newPosition.X - currentPosition.X;
+            var yOffset = newPosition.Y - currentPosition.Y;
+            if (yOffset > 0 && xOffset > 0)
+            {
+                Console.WriteLine("yOffset > 0 && xOffset > 0");
+                IUnit? unit = units[vTo - 1, hTo - 1];
+                if (unit == null || !unit.IsStatic) return;
+                var uRectangle = new RectangleF((hTo - 1) * unitWidth, (vTo - 1) * unitHeight, unitWidth, unitHeight);
+                rcollisionFlag = true;
+                newPositionX = uRectangle.Left - (float)rectWidth / 2;
+            }
+            if (yOffset > 0 && xOffset < 0)
+            {
+                Console.WriteLine("yOffset > 0 && xOffset < 0");
+                IUnit? unit = units[vTo - 1, hFrom];
+                if (unit == null || !unit.IsStatic) return;
+                var uRectangle = new RectangleF(hFrom * unitWidth, (vTo - 1) * unitHeight, unitWidth, unitHeight);
+                lcollisionFlag = true;
+                newPositionX = uRectangle.Right + (float)rectWidth / 2;
+            }
+            if (yOffset < 0 && xOffset < 0)
+            {
+                Console.WriteLine("yOffset < 0 && xOffset < 0");
+                IUnit? unit = units[vFrom, hFrom];
+                if (unit == null || !unit.IsStatic) return;
+                var uRectangle = new RectangleF(hFrom * unitWidth, vFrom * unitHeight, unitWidth, unitHeight);
+                lcollisionFlag = true;
+                newPositionX = uRectangle.Right + (float)rectWidth / 2;
+            }
+            if (yOffset < 0 && xOffset > 0)
+            {
+                Console.WriteLine("yOffset < 0 && xOffset > 0");
+                IUnit? unit = units[vFrom, hTo - 1];
+                if (unit == null || !unit.IsStatic) return;
+                var uRectangle = new RectangleF((hTo - 1) * unitWidth, vFrom * unitHeight, unitWidth, unitHeight);
+                rcollisionFlag = true;
+                newPositionX = uRectangle.Left - (float)rectWidth / 2;
+            }
         }
 
         private static bool TryAdjustPosition(
@@ -310,14 +384,16 @@ namespace GameApplication
 
         private static (int from, int to) GetTargetUnitsRange(float center, float size, float unitSize, int totalCount)
         {
-            int fromPixel = (int)(center - size / 2);
+            float fromPixelF = center - size / 2;
+            int fromPixel = (int)fromPixelF;
             int from = (int)(fromPixel / unitSize);
             if (from < 0) from = 0;
             if (from > totalCount) from = totalCount;
 
-            int toPixel = (int)(center + size / 2);
+            float toPixelF = center + size / 2;
+            int toPixel = (int)toPixelF;
             int to = (int)(toPixel / unitSize);
-            if (to * unitSize < toPixel) to += 1;
+            if (to * unitSize < toPixelF) to += 1;
             if (to > totalCount) to = totalCount;
             if (to < 0) to = 0;
 
