@@ -89,7 +89,7 @@ namespace GameApplication
                         if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
                             Global.World.SetUnitAt(vi, hi, new Unit(UnitBG.WOOD, vi, hi));
                         else
-                            Global.World.SetUnitAt(vi, hi, new Unit(UnitFG.DIRT, vi, hi));
+                            Global.World.SetUnitAt(vi, hi, new Unit(UnitFG.STONE, vi, hi));
 
                     if (currentMouseState.RightButton == ButtonState.Pressed &&
                         _previousMouseState.RightButton == ButtonState.Released)

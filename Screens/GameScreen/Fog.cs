@@ -7,7 +7,7 @@ namespace GameApplication
 {
     public class Fog
     {
-        private readonly RenderTarget2D _renderTarget2D;
+        private RenderTarget2D _renderTarget2D;
         private Effect? _effect;
         private readonly BlendState _multiply = new()
         {
@@ -39,6 +39,17 @@ namespace GameApplication
         public void RemoveLightRenderer(string name)
         {
             _lightRenderers.Remove(name);
+        }
+
+        public void Update()
+        {
+            var width = Global.Window.ClientBounds.Width;
+            var height = Global.Window.ClientBounds.Height;
+            if (_renderTarget2D.Width != width || _renderTarget2D.Height != height)
+            {
+                _renderTarget2D.Dispose();
+                _renderTarget2D = Global.GameGraphicsDevice.CreateHDRRenderTarget2D(Global.Window.ClientBounds.Width, Global.Window.ClientBounds.Height);
+            }
         }
 
         public void DrawTarget(SpriteBatch spriteBatch, Vector2 position)

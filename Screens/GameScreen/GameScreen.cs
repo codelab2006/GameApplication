@@ -52,6 +52,8 @@ namespace GameApplication
 
         public override void Update(GameTime gameTime)
         {
+            _fog.Update();
+
             if (_player != null)
             {
                 _background.Update(gameTime);

@@ -35,7 +35,7 @@ namespace GameApplication
             {
                 for (int j = 0; j != Units.GetLength(1); j++)
                 {
-                    Units[i, j] = new Unit(UnitFG.DIRT, i, j);
+                    Units[i, j] = new Unit(UnitFG.STONE, i, j);
                 }
             }
 
