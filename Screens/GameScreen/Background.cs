@@ -38,7 +38,7 @@ namespace GameApplication
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Begin(transformMatrix: Global.Camera.GetViewMatrix());
+            spriteBatch.Begin(transformMatrix: Global.ViewportAdapter.GetScaleMatrix());
             spriteBatch.Draw(_renderTarget2D, Vector2.Zero, Color.White);
             spriteBatch.End();
         }

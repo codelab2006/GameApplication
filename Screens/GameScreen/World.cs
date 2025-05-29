@@ -28,14 +28,14 @@ namespace GameApplication
             // {
             //     for (int j = 0; j != Units.GetLength(1); j++)
             //     {
-            //         Units[i, j] = new Unit(UnitBG.WOOD, i, j);
+            //         Units[i, j] = new Unit(UnitBG.DIRT, i, j);
             //     }
             // }
             for (int i = Units.GetLength(0) / 3; i != Units.GetLength(0); i++)
             {
                 for (int j = 0; j != Units.GetLength(1); j++)
                 {
-                    Units[i, j] = new Unit(UnitFG.STONE, i, j);
+                    Units[i, j] = new Unit(UnitFG.DIRT, i, j);
                 }
             }
 
@@ -229,9 +229,17 @@ namespace GameApplication
                         Color color = Color.White;
                         spriteBatch.Draw(
                             _texture2DBGUnits,
-                            new Vector2(j * Constants.UnitWidth - Constants.BG_UNIT_PADDING, i * Constants.UnitHeight - Constants.BG_UNIT_PADDING),
-                            new Rectangle((int)unit.BG * (Constants.UnitWidth + Constants.BG_UNIT_PADDING * 2), 0, Constants.UnitWidth + Constants.BG_UNIT_PADDING * 2, Constants.UnitHeight + Constants.BG_UNIT_PADDING * 2),
-                            color, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+                            new Rectangle(
+                                j * Constants.UnitWidth - Constants.BG_UNIT_PADDING,
+                                i * Constants.UnitHeight - Constants.BG_UNIT_PADDING,
+                                Constants.UnitWidth + Constants.BG_UNIT_PADDING * 2,
+                                Constants.UnitHeight + Constants.BG_UNIT_PADDING * 2),
+                            new Rectangle(
+                                (int)unit.BG * Constants.UnitTextureWidth,
+                                0,
+                                Constants.UnitTextureWidth,
+                                Constants.UnitTextureHeight),
+                            color);
                     }
                 }
             }
@@ -250,7 +258,19 @@ namespace GameApplication
                         )
                             color = Color.Blue;
 
-                        spriteBatch.Draw(_texture2DFGUnits, new Vector2(j * Constants.UnitWidth, i * Constants.UnitHeight), new Rectangle((int)unit.FG * Constants.UnitWidth, 0, Constants.UnitWidth, Constants.UnitHeight), color, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+                        spriteBatch.Draw(
+                            _texture2DFGUnits,
+                            new Rectangle(
+                                j * Constants.UnitWidth,
+                                i * Constants.UnitHeight,
+                                Constants.UnitWidth,
+                                Constants.UnitHeight),
+                            new Rectangle(
+                                (int)unit.FG * Constants.UnitTextureWidth,
+                                0,
+                                Constants.UnitTextureWidth,
+                                Constants.UnitTextureHeight),
+                            color);
                     }
                 }
             }

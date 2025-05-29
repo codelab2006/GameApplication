@@ -82,14 +82,15 @@ namespace GameApplication
             {
                 var rect = GetRectangleFByPosition(Position);
                 var (vi, hi) = Global.GetTargetUnitIndex(point, Constants.UnitHeight, Constants.UnitWidth);
-                if (!rect.Contains(point) && !rect.Intersects(new RectangleF(hi * Constants.UnitWidth, vi * Constants.UnitHeight, Constants.UnitWidth, Constants.UnitHeight)))
+                if (Keyboard.GetState().IsKeyDown(Keys.LeftControl) ||
+                    (!rect.Contains(point) && !rect.Intersects(new RectangleF(hi * Constants.UnitWidth, vi * Constants.UnitHeight, Constants.UnitWidth, Constants.UnitHeight))))
                 {
                     if (currentMouseState.LeftButton == ButtonState.Pressed &&
                         _previousMouseState.LeftButton == ButtonState.Released)
                         if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
-                            Global.World.SetUnitAt(vi, hi, new Unit(UnitBG.WOOD, vi, hi));
+                            Global.World.SetUnitAt(vi, hi, new Unit(UnitBG.DIRT, vi, hi));
                         else
-                            Global.World.SetUnitAt(vi, hi, new Unit(UnitFG.STONE, vi, hi));
+                            Global.World.SetUnitAt(vi, hi, new Unit(UnitFG.DIRT, vi, hi));
 
                     if (currentMouseState.RightButton == ButtonState.Pressed &&
                         _previousMouseState.RightButton == ButtonState.Released)

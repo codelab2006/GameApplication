@@ -7,15 +7,18 @@ namespace GameApplication
         public const int VirtualWidth = 1280; // 1920;
         public const int VirtualHeight = 720; // 1080;
 
-        public const int UnitWidth = 20;
-        public const int UnitHeight = 20;
+        public const int UnitWidth = 16;
+        public const int UnitHeight = 16;
+
+        public const int UnitTextureWidth = 48;
+        public const int UnitTextureHeight = 48;
 
         public const int BG_UNIT_PADDING = 6;
 
         public const int WorldHCount = 121; // 8400;
         public const int WorldVCount = 121; // 2400;
 
-        public const int CollisionMargin = 20;
+        public const int CollisionMargin = 16;
 
         public const int CollisionStep = 5;
 
@@ -41,11 +44,11 @@ namespace GameApplication
 
         public static readonly Vector2 GravityAcceleration = Vector2.Zero;
 
-        public static readonly int ADayTime = 60 * 24;
+        public static readonly int ADayTime = 60; // * 24;
 
         public static readonly bool ShowPlayer = true;
 
-        public static readonly bool RefreshBrightness = false;
+        public static readonly bool RefreshBrightness = true;
 
         public static readonly float MinLightIntensity = 0.02f;
         static Constants()
