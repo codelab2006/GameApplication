@@ -39,7 +39,7 @@ namespace GameApplication
                         _direction = 1;
                     if (_rotation >= _maxRotation)
                         _direction = -1;
-                    _rotation += MathHelper.ToRadians(_direction * 180 * elapsedSeconds);
+                    _rotation += MathHelper.ToRadians(_direction * 240 * elapsedSeconds);
                     Rotation = _rotation;
                 }
             }

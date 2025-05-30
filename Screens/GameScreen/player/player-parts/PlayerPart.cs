@@ -17,7 +17,7 @@ namespace GameApplication
 
     public abstract class PlayerHand : PlayerPart
     {
-        protected readonly float _maxRotation = MathHelper.ToRadians(20);
+        protected readonly float _maxRotation = MathHelper.ToRadians(30);
 
         public PlayerHand() : base() { }
 
@@ -34,7 +34,7 @@ namespace GameApplication
 
     public abstract class PlayerLeg : PlayerPart
     {
-        protected readonly float _maxRotation = MathHelper.ToRadians(20);
+        protected readonly float _maxRotation = MathHelper.ToRadians(30);
         public PlayerLeg() : base() { }
 
         public PlayerLeg(Texture2D texture2D, Vector2 position, PlayerBody playerBody) : base(texture2D, position)
